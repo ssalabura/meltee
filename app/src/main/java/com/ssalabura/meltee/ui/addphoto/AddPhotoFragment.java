@@ -2,6 +2,7 @@ package com.ssalabura.meltee.ui.addphoto;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.camera.core.CameraSelector;
+import androidx.camera.core.ImageCapture;
+import androidx.camera.core.ImageCaptureException;
 import androidx.camera.core.Preview;
 import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
@@ -22,6 +25,8 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.ssalabura.meltee.R;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -32,6 +37,7 @@ public class AddPhotoFragment extends Fragment {
 
     private View root;
     private ExecutorService cameraExecutor;
+    private ImageCapture imageCapture;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -48,10 +54,6 @@ public class AddPhotoFragment extends Fragment {
         return root;
     }
 
-    private void takePhoto() {
-        System.out.println("Took photo!");
-    }
-
     private void startCamera() {
         PreviewView previewView = root.findViewById(R.id.viewFinder);
         ListenableFuture<ProcessCameraProvider> cameraProviderFuture =
@@ -64,14 +66,16 @@ public class AddPhotoFragment extends Fragment {
                 e.printStackTrace();
             }
 
-            CameraSelector cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA;
-
             Preview preview = new Preview.Builder().build();
             preview.setSurfaceProvider(previewView.getSurfaceProvider());
 
+            imageCapture = new ImageCapture.Builder().build();
+
+            CameraSelector cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA;
+
             try {
                 cameraProvider.unbindAll();
-                cameraProvider.bindToLifecycle(getActivity(), cameraSelector, preview);
+                cameraProvider.bindToLifecycle(getActivity(), cameraSelector, preview, imageCapture);
             } catch(NullPointerException e) {
                 e.printStackTrace();
             }
@@ -79,8 +83,7 @@ public class AddPhotoFragment extends Fragment {
     }
 
     private boolean allPermissionsGranted() {
-        return ContextCompat.checkSelfPermission(
-                getContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
+        return ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
     }
 
     @Override
@@ -94,6 +97,30 @@ public class AddPhotoFragment extends Fragment {
                         Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    private String getOutputDirectory() {
+        return getContext().getExternalMediaDirs()[0].getAbsolutePath();
+    }
+
+    private void takePhoto() {
+        File photoFile = new File(getOutputDirectory(), "meltee-" +
+                new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss", Locale.ENGLISH)
+                        .format(System.currentTimeMillis()) + ".jpg");
+        ImageCapture.OutputFileOptions outputOptions = new ImageCapture.OutputFileOptions.Builder(photoFile).build();
+        imageCapture.takePicture(outputOptions, ContextCompat.getMainExecutor(getContext()), new ImageCapture.OnImageSavedCallback() {
+            @Override
+            public void onImageSaved(@NonNull ImageCapture.OutputFileResults outputFileResults) {
+                Toast.makeText(getContext(), "Photo capture succeeded: " + Uri.fromFile(photoFile), Toast.LENGTH_SHORT).show();
+                System.out.println("Photo capture succeeded: " + Uri.fromFile(photoFile));
+            }
+
+            @Override
+            public void onError(@NonNull ImageCaptureException exception) {
+                Toast.makeText(getContext(), "Photo capture failed: " + exception.getMessage(), Toast.LENGTH_SHORT).show();
+                System.out.println("Photo capture failed: " + exception.getMessage());
+            }
+        });
     }
 
     @Override
