@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Size;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,7 +70,9 @@ public class AddPhotoFragment extends Fragment {
             Preview preview = new Preview.Builder().build();
             preview.setSurfaceProvider(previewView.getSurfaceProvider());
 
-            imageCapture = new ImageCapture.Builder().build();
+            imageCapture = new ImageCapture.Builder()
+                    .setTargetResolution(new Size(1080,1440))
+                    .build();
 
             CameraSelector cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA;
 
@@ -83,7 +86,8 @@ public class AddPhotoFragment extends Fragment {
     }
 
     private boolean allPermissionsGranted() {
-        return ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
+        return ContextCompat.checkSelfPermission(
+                getContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
     }
 
     @Override
@@ -111,7 +115,7 @@ public class AddPhotoFragment extends Fragment {
         imageCapture.takePicture(outputOptions, ContextCompat.getMainExecutor(getContext()), new ImageCapture.OnImageSavedCallback() {
             @Override
             public void onImageSaved(@NonNull ImageCapture.OutputFileResults outputFileResults) {
-                Toast.makeText(getContext(), "Photo capture succeeded: " + Uri.fromFile(photoFile), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Photo capture succeeded.", Toast.LENGTH_SHORT).show();
                 System.out.println("Photo capture succeeded: " + Uri.fromFile(photoFile));
             }
 
