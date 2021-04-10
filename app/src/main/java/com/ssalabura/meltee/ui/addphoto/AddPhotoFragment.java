@@ -43,12 +43,11 @@ public class AddPhotoFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_add_photo, container, false);
-        if(allPermissionsGranted()) {
-            startCamera();
-        } else {
+        if(!allPermissionsGranted()) {
             ActivityCompat.requestPermissions(
                     getActivity(), REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS);
         }
+        startCamera();
         Button camera_capture_button = root.findViewById(R.id.camera_capture_button);
         camera_capture_button.setOnClickListener(v -> takePhoto());
         cameraExecutor = Executors.newSingleThreadExecutor();
@@ -86,21 +85,8 @@ public class AddPhotoFragment extends Fragment {
     }
 
     private boolean allPermissionsGranted() {
-        return ContextCompat.checkSelfPermission(
-                getContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if(requestCode == REQUEST_CODE_PERMISSIONS) {
-            if(allPermissionsGranted()) {
-                startCamera();
-            } else {
-                Toast.makeText(getContext(),
-                        "Permissions not granted by the user.",
-                        Toast.LENGTH_SHORT).show();
-            }
-        }
+        return ActivityCompat.checkSelfPermission(
+                getActivity(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
     }
 
     private String getOutputDirectory() {
@@ -121,7 +107,7 @@ public class AddPhotoFragment extends Fragment {
 
             @Override
             public void onError(@NonNull ImageCaptureException exception) {
-                Toast.makeText(getContext(), "Photo capture failed: " + exception.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Failed: " + exception.getMessage(), Toast.LENGTH_SHORT).show();
                 System.out.println("Photo capture failed: " + exception.getMessage());
             }
         });

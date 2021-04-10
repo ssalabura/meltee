@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,26 +40,33 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<PhotoCardViewHolde
     public void onBindViewHolder(@NonNull PhotoCardViewHolder holder, int position) {
         PhotoCard photoCard = this.photoCardList.get(position);
 
-        Bitmap bitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeFile(photoCard.imagePath), 1440, 1080, false);
+        int width = 1080;
+        int height = 1440;
+        int orientation = ExifInterface.ORIENTATION_UNDEFINED;
         try {
             ExifInterface exifInterface = new ExifInterface(photoCard.imagePath);
-            switch(exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)) {
-                case ExifInterface.ORIENTATION_ROTATE_90:
-                    bitmap = rotate(bitmap, 90);
-                    break;
-                case ExifInterface.ORIENTATION_ROTATE_180:
-                    bitmap = rotate(bitmap, 180);
-                    break;
-                case ExifInterface.ORIENTATION_ROTATE_270:
-                    bitmap = rotate(bitmap, 270);
-                    break;
+            orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+            if(orientation == ExifInterface.ORIENTATION_ROTATE_90 || orientation == ExifInterface.ORIENTATION_ROTATE_270) {
+                width = 1440;
+                height = 1080;
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        Bitmap bitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeFile(photoCard.imagePath), width, height, true);
+        switch(orientation) {
+            case ExifInterface.ORIENTATION_ROTATE_90:
+                bitmap = rotate(bitmap, 90);
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_180:
+                bitmap = rotate(bitmap, 180);
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_270:
+                bitmap = rotate(bitmap, 270);
+        }
         holder.photo.setImageBitmap(bitmap);
         holder.text.setText(photoCard.text);
-
     }
 
     private Bitmap rotate(Bitmap bitmap, int angle) {
