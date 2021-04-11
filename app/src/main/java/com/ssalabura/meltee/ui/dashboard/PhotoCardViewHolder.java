@@ -13,10 +13,10 @@ public class PhotoCardViewHolder extends RecyclerView.ViewHolder {
     ImageView photo;
     TextView text;
 
-    public PhotoCardViewHolder(@NonNull View itemView) {
+    PhotoCardViewHolder(@NonNull View itemView) {
         super(itemView);
 
-        this.photo = itemView.findViewById(R.id.imageView_photo);
+        this.photo = itemView.findViewById(R.id.imageView);
         this.text = itemView.findViewById(R.id.textView_text);
     }
 }

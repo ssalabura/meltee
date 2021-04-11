@@ -2,30 +2,34 @@ package com.ssalabura.meltee.ui.addphoto;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
-import android.net.Uri;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Size;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.ImageCapture;
 import androidx.camera.core.ImageCaptureException;
+import androidx.camera.core.ImageProxy;
 import androidx.camera.core.Preview;
 import androidx.camera.lifecycle.ProcessCameraProvider;
-import androidx.camera.view.PreviewView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.ssalabura.meltee.R;
+import com.ssalabura.meltee.util.BitmapTools;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
@@ -37,25 +41,31 @@ public class AddPhotoFragment extends Fragment {
     private static final int REQUEST_CODE_PERMISSIONS = 10;
 
     private View root;
+    private AddPhotoViewHolder holder;
     private ExecutorService cameraExecutor;
     private ImageCapture imageCapture;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_add_photo, container, false);
+        holder = new AddPhotoViewHolder(root);
+        holder.changeState(AddPhotoViewHolder.State.PHOTO_NOT_TAKEN);
+
+        holder.button_back.setOnClickListener(v -> onClickButtonBack());
+        holder.button_take_photo.setOnClickListener(v -> takePhoto());
+        holder.button_send.setOnClickListener(v -> onClickButtonSend());
+
         if(!allPermissionsGranted()) {
             ActivityCompat.requestPermissions(
                     getActivity(), REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS);
         }
         startCamera();
-        Button camera_capture_button = root.findViewById(R.id.camera_capture_button);
-        camera_capture_button.setOnClickListener(v -> takePhoto());
+
         cameraExecutor = Executors.newSingleThreadExecutor();
         return root;
     }
 
     private void startCamera() {
-        PreviewView previewView = root.findViewById(R.id.viewFinder);
         ListenableFuture<ProcessCameraProvider> cameraProviderFuture =
                 ProcessCameraProvider.getInstance(getContext());
         cameraProviderFuture.addListener(() -> {
@@ -67,10 +77,11 @@ public class AddPhotoFragment extends Fragment {
             }
 
             Preview preview = new Preview.Builder().build();
-            preview.setSurfaceProvider(previewView.getSurfaceProvider());
+            preview.setSurfaceProvider(holder.previewView.getSurfaceProvider());
 
             imageCapture = new ImageCapture.Builder()
                     .setTargetResolution(new Size(1080,1440))
+                    .setCaptureMode(ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY)
                     .build();
 
             CameraSelector cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA;
@@ -94,15 +105,13 @@ public class AddPhotoFragment extends Fragment {
     }
 
     private void takePhoto() {
-        File photoFile = new File(getOutputDirectory(), "meltee-" +
-                new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss", Locale.ENGLISH)
-                        .format(System.currentTimeMillis()) + ".jpg");
-        ImageCapture.OutputFileOptions outputOptions = new ImageCapture.OutputFileOptions.Builder(photoFile).build();
-        imageCapture.takePicture(outputOptions, ContextCompat.getMainExecutor(getContext()), new ImageCapture.OnImageSavedCallback() {
+        imageCapture.takePicture(ContextCompat.getMainExecutor(getContext()), new ImageCapture.OnImageCapturedCallback() {
             @Override
-            public void onImageSaved(@NonNull ImageCapture.OutputFileResults outputFileResults) {
-                Toast.makeText(getContext(), "Photo capture succeeded.", Toast.LENGTH_SHORT).show();
-                System.out.println("Photo capture succeeded: " + Uri.fromFile(photoFile));
+            public void onCaptureSuccess(@NonNull ImageProxy image) {
+                System.out.println("Photo capture succeeded.");
+                holder.setImageBitmap(BitmapTools.fromImageProxy(image));
+                image.close();
+                holder.changeState(AddPhotoViewHolder.State.PHOTO_TAKEN);
             }
 
             @Override
@@ -111,6 +120,26 @@ public class AddPhotoFragment extends Fragment {
                 System.out.println("Photo capture failed: " + exception.getMessage());
             }
         });
+    }
+
+    private void onClickButtonBack() {
+        holder.changeState(AddPhotoViewHolder.State.PHOTO_NOT_TAKEN);
+        holder.imageBitmap.recycle();
+    }
+
+    private void onClickButtonSend() {
+        //TODO: send to online database
+        String fileName = getOutputDirectory() + "/meltee-" +
+                new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss", Locale.ENGLISH)
+                        .format(System.currentTimeMillis()) + ".jpg";
+        try (FileOutputStream out = new FileOutputStream(fileName)) {
+            holder.imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+            Toast.makeText(getContext(), "Photo successfully saved.", Toast.LENGTH_SHORT).show();
+            System.out.println("Photo successfully saved: " + fileName);
+            ((BottomNavigationView)getActivity().findViewById(R.id.nav_view)).setSelectedItemId(R.id.navigation_dashboard);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

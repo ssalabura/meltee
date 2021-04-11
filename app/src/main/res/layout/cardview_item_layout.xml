@@ -17,7 +17,7 @@
         android:layout_height="wrap_content">
 
         <ImageView
-            android:id="@+id/imageView_photo"
+            android:id="@+id/imageView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
@@ -32,7 +32,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:textSize="16sp"
-            app:layout_constraintTop_toBottomOf="@+id/imageView_photo"
+            app:layout_constraintTop_toBottomOf="@+id/imageView"
             app:layout_constraintStart_toStartOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>
