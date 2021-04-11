@@ -1,7 +1,6 @@
 package com.ssalabura.meltee.ui.dashboard;
 
 import android.content.Context;
-import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.ssalabura.meltee.R;
 import com.ssalabura.meltee.ui.database.PhotoCard;
+import com.ssalabura.meltee.util.BitmapTools;
 
 import java.util.List;
 
@@ -38,7 +38,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<PhotoCardViewHolde
         PhotoCard photoCard = this.photoCardList.get(position);
 
         holder.sender.setText(photoCard.sender);
-        holder.photo.setImageBitmap(BitmapFactory.decodeByteArray(photoCard.photo, 0, photoCard.photo.length));
+        holder.photo.setImageBitmap(BitmapTools.fromByteArray(photoCard.photo));
         holder.text.setText(photoCard.text);
     }
 

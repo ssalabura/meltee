@@ -2,7 +2,6 @@ package com.ssalabura.meltee.ui.addphoto;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Size;
 import android.view.LayoutInflater;
@@ -30,7 +29,6 @@ import com.ssalabura.meltee.ui.database.PhotoCard;
 import com.ssalabura.meltee.ui.database.PhotoCardDao;
 import com.ssalabura.meltee.util.BitmapTools;
 
-import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
@@ -126,14 +124,11 @@ public class AddPhotoFragment extends Fragment {
 
     private void onClickButtonSend() {
         //TODO: send to online database
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        holder.imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
         String text = "Photo taken: " + new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.ENGLISH).format(System.currentTimeMillis());
 
         AppDatabase db = AppDatabase.getInstance(getContext());
         PhotoCardDao photoCardDao = db.photoCardDao();
-        photoCardDao.insert(new PhotoCard(MainActivity.username, stream.toByteArray(), text));
-        System.out.println(getActivity());
+        photoCardDao.insert(new PhotoCard(MainActivity.username, BitmapTools.toByteArray(holder.imageBitmap), text));
         getActivity().runOnUiThread(() -> {
             Toast.makeText(getContext(), "Photo successfully saved.", Toast.LENGTH_SHORT).show();
             System.out.println("Photo successfully saved.");

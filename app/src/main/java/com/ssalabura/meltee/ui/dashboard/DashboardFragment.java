@@ -21,30 +21,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DashboardFragment extends Fragment {
+    View root;
     SwipeRefreshLayout swipeRefreshLayout;
     RecyclerView recyclerView;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_dashboard, container, false);
+        root = inflater.inflate(R.layout.fragment_dashboard, container, false);
 
         recyclerView = root.findViewById(R.id.recyclerView);
 
         swipeRefreshLayout = root.findViewById(R.id.swipeRefresh);
         swipeRefreshLayout.setOnRefreshListener(() -> {
             //TODO: read from online database and write to local
-            new Thread(() -> refreshPhotoCards(root)).start();
+            new Thread(this::refreshPhotoCards).start();
         });
 
         recyclerView.setAdapter(new RecyclerViewAdapter(getContext(), new ArrayList<>()));
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
 
-        new Thread(() -> refreshPhotoCards(root)).start();
+        new Thread(this::refreshPhotoCards).start();
         return root;
     }
 
-    private void refreshPhotoCards(View root) {
+    private void refreshPhotoCards() {
         AppDatabase db = AppDatabase.getInstance(getContext());
         PhotoCardDao photoCardDao = db.photoCardDao();
         List<PhotoCard> photoCardList = photoCardDao.getAll();
