@@ -13,8 +13,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.ssalabura.meltee.R;
+import com.ssalabura.meltee.ui.database.AppDatabase;
+import com.ssalabura.meltee.ui.database.PhotoCard;
+import com.ssalabura.meltee.ui.database.PhotoCardDao;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,29 +33,30 @@ public class DashboardFragment extends Fragment {
         swipeRefreshLayout = root.findViewById(R.id.swipeRefresh);
         swipeRefreshLayout.setOnRefreshListener(() -> {
             //TODO: read from online database and write to local
-            refreshPhotoCards(root);
+            new Thread(() -> refreshPhotoCards(root)).start();
         });
 
-        refreshPhotoCards(root);
-
+        recyclerView.setAdapter(new RecyclerViewAdapter(getContext(), new ArrayList<>()));
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
+
+        new Thread(() -> refreshPhotoCards(root)).start();
         return root;
     }
 
     private void refreshPhotoCards(View root) {
-        //TODO: read from device database
-        List<PhotoCard> photoCardList = new ArrayList<>();
-        for(File f : getContext().getExternalMediaDirs()[0].listFiles()) {
-            photoCardList.add(new PhotoCard("ssalabura", f.getAbsolutePath(), f.getName()));
-        }
+        AppDatabase db = AppDatabase.getInstance(getContext());
+        PhotoCardDao photoCardDao = db.photoCardDao();
+        List<PhotoCard> photoCardList = photoCardDao.getAll();
         TextView empty = root.findViewById(R.id.textView_empty);
         if(photoCardList.size() > 0) {
             empty.setVisibility(View.INVISIBLE);
         } else {
             empty.setVisibility(View.VISIBLE);
         }
-        recyclerView.setAdapter(new RecyclerViewAdapter(getContext(), photoCardList));
-        swipeRefreshLayout.setRefreshing(false);
+        getActivity().runOnUiThread(() -> {
+            recyclerView.setAdapter(new RecyclerViewAdapter(getContext(), photoCardList));
+            swipeRefreshLayout.setRefreshing(false);
+        });
     }
 }

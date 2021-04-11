@@ -8,7 +8,6 @@ import android.util.Size;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -24,12 +23,14 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.ssalabura.meltee.MainActivity;
 import com.ssalabura.meltee.R;
+import com.ssalabura.meltee.ui.database.AppDatabase;
+import com.ssalabura.meltee.ui.database.PhotoCard;
+import com.ssalabura.meltee.ui.database.PhotoCardDao;
 import com.ssalabura.meltee.util.BitmapTools;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
@@ -53,7 +54,7 @@ public class AddPhotoFragment extends Fragment {
 
         holder.button_back.setOnClickListener(v -> onClickButtonBack());
         holder.button_take_photo.setOnClickListener(v -> takePhoto());
-        holder.button_send.setOnClickListener(v -> onClickButtonSend());
+        holder.button_send.setOnClickListener(v -> new Thread(this::onClickButtonSend).start());
 
         if(!allPermissionsGranted()) {
             ActivityCompat.requestPermissions(
@@ -100,10 +101,6 @@ public class AddPhotoFragment extends Fragment {
                 getActivity(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
     }
 
-    private String getOutputDirectory() {
-        return getContext().getExternalMediaDirs()[0].getAbsolutePath();
-    }
-
     private void takePhoto() {
         imageCapture.takePicture(ContextCompat.getMainExecutor(getContext()), new ImageCapture.OnImageCapturedCallback() {
             @Override
@@ -129,17 +126,20 @@ public class AddPhotoFragment extends Fragment {
 
     private void onClickButtonSend() {
         //TODO: send to online database
-        String fileName = getOutputDirectory() + "/meltee-" +
-                new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss", Locale.ENGLISH)
-                        .format(System.currentTimeMillis()) + ".jpg";
-        try (FileOutputStream out = new FileOutputStream(fileName)) {
-            holder.imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        holder.imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        String text = "Photo taken: " + new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.ENGLISH).format(System.currentTimeMillis());
+
+        AppDatabase db = AppDatabase.getInstance(getContext());
+        PhotoCardDao photoCardDao = db.photoCardDao();
+        photoCardDao.insert(new PhotoCard(MainActivity.username, stream.toByteArray(), text));
+        System.out.println(getActivity());
+        getActivity().runOnUiThread(() -> {
             Toast.makeText(getContext(), "Photo successfully saved.", Toast.LENGTH_SHORT).show();
-            System.out.println("Photo successfully saved: " + fileName);
+            System.out.println("Photo successfully saved.");
             ((BottomNavigationView)getActivity().findViewById(R.id.nav_view)).setSelectedItemId(R.id.navigation_dashboard);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        });
+        holder.imageBitmap.recycle();
     }
 
     @Override
