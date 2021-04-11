@@ -45,7 +45,7 @@ public class DashboardFragment extends Fragment {
         //TODO: read from device database
         List<PhotoCard> photoCardList = new ArrayList<>();
         for(File f : getContext().getExternalMediaDirs()[0].listFiles()) {
-            photoCardList.add(new PhotoCard(f.getAbsolutePath(), f.getName()));
+            photoCardList.add(new PhotoCard("ssalabura", f.getAbsolutePath(), f.getName()));
         }
         TextView empty = root.findViewById(R.id.textView_empty);
         if(photoCardList.size() > 0) {

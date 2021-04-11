@@ -36,6 +36,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<PhotoCardViewHolde
     public void onBindViewHolder(@NonNull PhotoCardViewHolder holder, int position) {
         PhotoCard photoCard = this.photoCardList.get(position);
 
+        holder.sender.setText(photoCard.sender);
         holder.photo.setImageBitmap(BitmapTools.fromFile(photoCard.imagePath));
         holder.text.setText(photoCard.text);
     }

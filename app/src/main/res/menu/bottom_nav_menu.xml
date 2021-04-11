@@ -11,8 +11,8 @@
         android:title="@string/title_add_photo" />
 
     <item
-        android:id="@+id/navigation_settings"
-        android:icon="@drawable/ic_baseline_settings_24"
-        android:title="@string/title_settings" />
+        android:id="@+id/navigation_friends"
+        android:icon="@drawable/ic_baseline_people_24"
+        android:title="@string/title_friends" />
 
 </menu>

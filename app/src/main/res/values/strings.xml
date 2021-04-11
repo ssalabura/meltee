@@ -13,5 +13,6 @@
     <string name="dashboard_empty">No photos :(\nCheck back later!</string>
     <string name="title_add_photo">Send</string>
     <string name="take_photo">Take Photo</string>
-    <string name="title_settings">Settings</string>
+    <string name="title_friends">Friends</string>
+    <string name="wip">Work in progress</string>
 </resources>
