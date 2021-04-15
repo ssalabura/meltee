@@ -11,6 +11,7 @@ public class PhotoCard {
     @PrimaryKey(autoGenerate = true)
     public int id;
     public String sender;
+    public long timestamp;
     public byte[] photo;
     public String message;
 
@@ -22,8 +23,9 @@ public class PhotoCard {
 
     }
 
-    public PhotoCard(String sender, byte[] photo, String message) {
+    public PhotoCard(String sender, long timestamp, byte[] photo, String message) {
         this.sender = sender;
+        this.timestamp = timestamp;
         this.photo = photo;
         this.message = message;
     }

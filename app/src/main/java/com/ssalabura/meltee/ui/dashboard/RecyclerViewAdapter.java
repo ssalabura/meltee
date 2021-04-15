@@ -12,7 +12,9 @@ import com.ssalabura.meltee.R;
 import com.ssalabura.meltee.database.PhotoCard;
 import com.ssalabura.meltee.util.BitmapTools;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<PhotoCardViewHolder> {
 
@@ -38,6 +40,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<PhotoCardViewHolde
         PhotoCard photoCard = this.photoCardList.get(position);
 
         holder.sender.setText(photoCard.sender);
+        holder.timestamp.setText(new SimpleDateFormat("KK:mm aa", Locale.ENGLISH).format(photoCard.timestamp));
         holder.photo.setImageBitmap(BitmapTools.fromByteArray(photoCard.photo));
         holder.message.setText(photoCard.message);
     }

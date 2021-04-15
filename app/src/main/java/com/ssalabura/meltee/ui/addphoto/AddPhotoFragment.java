@@ -31,6 +31,8 @@ import com.ssalabura.meltee.database.PhotoCard;
 import com.ssalabura.meltee.database.PhotoCardDao;
 import com.ssalabura.meltee.util.BitmapTools;
 
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -115,6 +117,9 @@ public class AddPhotoFragment extends Fragment implements AdditionalInfoDialogFr
             @Override
             public void onCaptureSuccess(@NonNull ImageProxy image) {
                 System.out.println("Photo capture succeeded.");
+                photoCard.timestamp = System.currentTimeMillis();
+                holder.card_preview_holder.timestamp.setText(
+                        new SimpleDateFormat("KK:mm aa", Locale.ENGLISH).format(photoCard.timestamp));
                 Bitmap bitmap = BitmapTools.fromImageProxy(image);
                 photoCard.bitmap = bitmap;
                 holder.card_preview_holder.photo.setImageBitmap(bitmap);
