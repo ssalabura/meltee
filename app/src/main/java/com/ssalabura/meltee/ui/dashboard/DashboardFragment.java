@@ -13,9 +13,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.ssalabura.meltee.R;
-import com.ssalabura.meltee.ui.database.AppDatabase;
-import com.ssalabura.meltee.ui.database.PhotoCard;
-import com.ssalabura.meltee.ui.database.PhotoCardDao;
+import com.ssalabura.meltee.database.AppDatabase;
+import com.ssalabura.meltee.database.PhotoCard;
+import com.ssalabura.meltee.database.PhotoCardDao;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -15,4 +15,6 @@
     <string name="take_photo">Take Photo</string>
     <string name="title_friends">Friends</string>
     <string name="wip">Work in progress</string>
+    <string name="hint_message">(empty)</string>
+    <string name="dialog_message">Message:</string>
 </resources>

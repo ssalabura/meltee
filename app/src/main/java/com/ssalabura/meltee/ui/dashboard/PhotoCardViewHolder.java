@@ -10,15 +10,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.ssalabura.meltee.R;
 
 public class PhotoCardViewHolder extends RecyclerView.ViewHolder {
-    TextView sender;
-    ImageView photo;
-    TextView text;
+    public TextView sender;
+    public ImageView photo;
+    public TextView message;
 
-    PhotoCardViewHolder(@NonNull View itemView) {
+    public PhotoCardViewHolder(@NonNull View itemView) {
         super(itemView);
 
         this.sender = itemView.findViewById(R.id.textView_sender);
         this.photo = itemView.findViewById(R.id.imageView);
-        this.text = itemView.findViewById(R.id.textView_text);
+        this.message = itemView.findViewById(R.id.textView_message);
     }
 }

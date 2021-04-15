@@ -12,11 +12,8 @@
         android:layout_height="match_parent"
         android:layout_marginBottom="150dp" />
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="150dp" />
+    <include layout="@layout/cardview_item_layout"
+        android:id="@+id/card_preview" />
 
     <Button
         android:id="@+id/button_back"
@@ -34,6 +31,16 @@
         android:layout_height="100dp"
         android:layout_marginBottom="50dp"
         android:background="@drawable/ic_twotone_circle_24"
+        app:layout_constraintStart_toEndOf="@+id/button_back"
+        app:layout_constraintEnd_toStartOf="@+id/button_send"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <Button
+        android:id="@+id/button_additional_info"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="75dp"
+        android:background="@drawable/ic_baseline_add_circle_outline_24"
         app:layout_constraintStart_toEndOf="@+id/button_back"
         app:layout_constraintEnd_toStartOf="@+id/button_send"
         app:layout_constraintBottom_toBottomOf="parent" />

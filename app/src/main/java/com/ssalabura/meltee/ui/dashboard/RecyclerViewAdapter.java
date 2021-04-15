@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ssalabura.meltee.R;
-import com.ssalabura.meltee.ui.database.PhotoCard;
+import com.ssalabura.meltee.database.PhotoCard;
 import com.ssalabura.meltee.util.BitmapTools;
 
 import java.util.List;
@@ -39,7 +39,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<PhotoCardViewHolde
 
         holder.sender.setText(photoCard.sender);
         holder.photo.setImageBitmap(BitmapTools.fromByteArray(photoCard.photo));
-        holder.text.setText(photoCard.text);
+        holder.message.setText(photoCard.message);
     }
 
     @Override

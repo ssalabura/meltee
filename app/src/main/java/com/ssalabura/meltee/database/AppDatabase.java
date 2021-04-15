@@ -1,4 +1,4 @@
-package com.ssalabura.meltee.ui.database;
+package com.ssalabura.meltee.database;
 
 import android.content.Context;
 
