@@ -40,6 +40,7 @@ public class AdditionalInfoDialogFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_additional_info, null);
+        ((EditText)view.findViewById(R.id.dialog_message)).setText(getArguments().getString("message"));
         builder.setView(view)
                 .setPositiveButton("OK", (dialog, id) -> {
                     listener.onDialogPositiveClick(((EditText)view.findViewById(R.id.dialog_message)).getText().toString());

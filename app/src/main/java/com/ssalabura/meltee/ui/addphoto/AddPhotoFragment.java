@@ -59,6 +59,9 @@ public class AddPhotoFragment extends Fragment implements AdditionalInfoDialogFr
         holder.button_additional_info.setOnClickListener(v -> {
             DialogFragment dialogFragment = new AdditionalInfoDialogFragment();
             dialogFragment.setTargetFragment(this, 22);
+            Bundle bundle = new Bundle();
+            bundle.putString("message", holder.card_preview_holder.message.getText().toString());
+            dialogFragment.setArguments(bundle);
             dialogFragment.show(getParentFragmentManager(), "AdditionalInfoDialog");
         });
         holder.button_send.setOnClickListener(v -> new Thread(this::onClickButtonSend).start());

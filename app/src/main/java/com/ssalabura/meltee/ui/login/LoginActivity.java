@@ -120,7 +120,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
         // temporary
-        loginViewModel.login("admin","admin");
+//        loginViewModel.login("admin","admin");
     }
 
     private void updateUiWithUser(LoggedInUserView model) {
