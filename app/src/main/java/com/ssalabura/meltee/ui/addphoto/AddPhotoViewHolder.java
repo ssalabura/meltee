@@ -12,6 +12,7 @@ public class AddPhotoViewHolder {
     PreviewView previewView;
     View card_preview;
     PhotoCardViewHolder card_preview_holder;
+    Button button_flip_camera;
 
     Button button_back;
     Button button_take_photo;
@@ -24,6 +25,7 @@ public class AddPhotoViewHolder {
         previewView = root.findViewById(R.id.previewView);
         card_preview = root.findViewById(R.id.card_preview);
         card_preview_holder = new PhotoCardViewHolder(card_preview);
+        button_flip_camera = root.findViewById(R.id.button_flip_camera);
         button_back = root.findViewById(R.id.button_back);
         button_take_photo = root.findViewById(R.id.button_take_photo);
         button_additional_info = root.findViewById(R.id.button_additional_info);
@@ -34,6 +36,7 @@ public class AddPhotoViewHolder {
         switch(state) {
             case PHOTO_NOT_TAKEN:
                 previewView.setVisibility(View.VISIBLE);
+                button_flip_camera.setVisibility(View.VISIBLE);
                 card_preview.setVisibility(View.INVISIBLE);
 
                 button_take_photo.setVisibility(View.VISIBLE);
@@ -44,6 +47,7 @@ public class AddPhotoViewHolder {
                 break;
             case PHOTO_TAKEN:
                 previewView.setVisibility(View.INVISIBLE);
+                button_flip_camera.setVisibility(View.INVISIBLE);
                 card_preview.setVisibility(View.VISIBLE);
 
                 button_take_photo.setVisibility(View.INVISIBLE);

@@ -34,25 +34,38 @@ import com.ssalabura.meltee.util.BitmapTools;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class AddPhotoFragment extends Fragment implements AdditionalInfoDialogFragment.AdditionalInfoDialogListener {
     private static final String[] REQUIRED_PERMISSIONS = new String[]{Manifest.permission.CAMERA};
     private static final int REQUEST_CODE_PERMISSIONS = 10;
 
-    private View root;
     private AddPhotoViewHolder holder;
-    private ExecutorService cameraExecutor;
-    private ImageCapture imageCapture;
 
-    PhotoCard photoCard;
+    private CameraSelector cameraSelector;
+    private ImageCapture imageCapture;
+    private PhotoCard photoCard;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        root = inflater.inflate(R.layout.fragment_add_photo, container, false);
+        View root = inflater.inflate(R.layout.fragment_add_photo, container, false);
         holder = new AddPhotoViewHolder(root);
         holder.changeState(AddPhotoViewHolder.State.PHOTO_NOT_TAKEN);
+
+        if(!allPermissionsGranted()) {
+            ActivityCompat.requestPermissions(
+                    getActivity(), REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS);
+        }
+        cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA;
+        startCamera();
+
+        holder.button_flip_camera.setOnClickListener(v -> {
+            if(cameraSelector == CameraSelector.DEFAULT_BACK_CAMERA) {
+                cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA;
+            } else {
+                cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA;
+            }
+            startCamera();
+        });
 
         holder.button_take_photo.setOnClickListener(v -> takePhoto());
         holder.button_back.setOnClickListener(v -> onClickButtonBack());
@@ -65,14 +78,6 @@ public class AddPhotoFragment extends Fragment implements AdditionalInfoDialogFr
             dialogFragment.show(getParentFragmentManager(), "AdditionalInfoDialog");
         });
         holder.button_send.setOnClickListener(v -> new Thread(this::onClickButtonSend).start());
-
-        if(!allPermissionsGranted()) {
-            ActivityCompat.requestPermissions(
-                    getActivity(), REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS);
-        }
-        startCamera();
-
-        cameraExecutor = Executors.newSingleThreadExecutor();
 
         photoCard = new PhotoCard();
         photoCard.sender = MainActivity.username;
@@ -99,14 +104,8 @@ public class AddPhotoFragment extends Fragment implements AdditionalInfoDialogFr
                     .setCaptureMode(ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY)
                     .build();
 
-            CameraSelector cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA;
-
-            try {
-                cameraProvider.unbindAll();
-                cameraProvider.bindToLifecycle(getActivity(), cameraSelector, preview, imageCapture);
-            } catch(NullPointerException e) {
-                e.printStackTrace();
-            }
+            cameraProvider.unbindAll();
+            cameraProvider.bindToLifecycle(getActivity(), cameraSelector, preview, imageCapture);
         }, ContextCompat.getMainExecutor(getContext()));
     }
 
@@ -123,7 +122,7 @@ public class AddPhotoFragment extends Fragment implements AdditionalInfoDialogFr
                 photoCard.timestamp = System.currentTimeMillis();
                 holder.card_preview_holder.timestamp.setText(
                         new SimpleDateFormat("KK:mm aa", Locale.ENGLISH).format(photoCard.timestamp));
-                Bitmap bitmap = BitmapTools.fromImageProxy(image);
+                Bitmap bitmap = BitmapTools.fromImageProxy(image, cameraSelector);
                 photoCard.bitmap = bitmap;
                 holder.card_preview_holder.photo.setImageBitmap(bitmap);
                 holder.changeState(AddPhotoViewHolder.State.PHOTO_TAKEN);
@@ -159,7 +158,18 @@ public class AddPhotoFragment extends Fragment implements AdditionalInfoDialogFr
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        cameraExecutor.shutdown();
+        ListenableFuture<ProcessCameraProvider> cameraProviderFuture =
+                ProcessCameraProvider.getInstance(getContext());
+        cameraProviderFuture.addListener(() -> {
+            ProcessCameraProvider cameraProvider = null;
+            try {
+                cameraProvider = cameraProviderFuture.get();
+            } catch (ExecutionException | InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            cameraProvider.unbindAll();
+        }, ContextCompat.getMainExecutor(getContext()));
     }
 
     @Override

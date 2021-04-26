@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 
+import androidx.camera.core.CameraSelector;
 import androidx.camera.core.ImageProxy;
 
 import java.io.ByteArrayOutputStream;
@@ -12,7 +13,7 @@ import java.nio.ByteBuffer;
 
 public class BitmapTools {
 
-    public static Bitmap fromImageProxy(ImageProxy image) {
+    public static Bitmap fromImageProxy(ImageProxy image, CameraSelector cameraSelector) {
         ImageProxy.PlaneProxy planeProxy = image.getPlanes()[0];
         ByteBuffer buffer = planeProxy.getBuffer();
         byte[] bytes = new byte[buffer.remaining()];
@@ -21,6 +22,9 @@ public class BitmapTools {
 
         Matrix matrix = new Matrix();
         matrix.postRotate(image.getImageInfo().getRotationDegrees());
+        if(cameraSelector == CameraSelector.DEFAULT_FRONT_CAMERA) {
+            matrix.postScale(-1,1);
+        }
         Bitmap rotated = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
         bitmap.recycle();
         return rotated;

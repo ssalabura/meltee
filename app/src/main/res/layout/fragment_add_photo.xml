@@ -16,6 +16,14 @@
         android:id="@+id/card_preview" />
 
     <Button
+        android:id="@+id/button_flip_camera"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/ic_baseline_flip_camera_android_24"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
         android:id="@+id/button_back"
         android:layout_width="50dp"
         android:layout_height="50dp"

@@ -25,8 +25,6 @@ import android.widget.Toast;
 
 import com.ssalabura.meltee.MainActivity;
 import com.ssalabura.meltee.R;
-import com.ssalabura.meltee.ui.login.LoginViewModel;
-import com.ssalabura.meltee.ui.login.LoginViewModelFactory;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -119,7 +117,7 @@ public class LoginActivity extends AppCompatActivity {
                         passwordEditText.getText().toString());
             }
         });
-        // temporary
+        // auto-login
 //        loginViewModel.login("admin","admin");
     }
 
