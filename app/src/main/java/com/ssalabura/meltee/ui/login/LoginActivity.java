@@ -118,7 +118,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
         // auto-login
-//        loginViewModel.login("admin","admin");
+        loginViewModel.login("admin","admin");
     }
 
     private void updateUiWithUser(LoggedInUserView model) {

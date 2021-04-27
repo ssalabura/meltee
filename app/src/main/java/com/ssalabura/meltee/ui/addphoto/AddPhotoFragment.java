@@ -27,8 +27,10 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.ssalabura.meltee.MainActivity;
 import com.ssalabura.meltee.R;
 import com.ssalabura.meltee.database.AppDatabase;
+import com.ssalabura.meltee.database.MelteeRealm;
 import com.ssalabura.meltee.database.PhotoCard;
 import com.ssalabura.meltee.database.PhotoCardDao;
+import com.ssalabura.meltee.database.RealmPhotoCard;
 import com.ssalabura.meltee.util.BitmapTools;
 
 import java.text.SimpleDateFormat;
@@ -142,11 +144,13 @@ public class AddPhotoFragment extends Fragment implements AdditionalInfoDialogFr
     }
 
     private void onClickButtonSend() {
+        photoCard.photo = BitmapTools.toByteArray(photoCard.bitmap);
+
         //TODO: send to online database
+        MelteeRealm.insertPhoto(new RealmPhotoCard(photoCard));
 
         AppDatabase db = AppDatabase.getInstance(getContext());
         PhotoCardDao photoCardDao = db.photoCardDao();
-        photoCard.photo = BitmapTools.toByteArray(photoCard.bitmap);
         photoCardDao.insert(photoCard);
         getActivity().runOnUiThread(() -> {
             Toast.makeText(getContext(), "Photo successfully saved.", Toast.LENGTH_SHORT).show();
