@@ -4,58 +4,54 @@ import android.content.Context;
 
 import com.ssalabura.meltee.MainActivity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.Realm;
 import io.realm.Sort;
 import io.realm.mongodb.App;
 import io.realm.mongodb.AppConfiguration;
-import io.realm.mongodb.Credentials;
+import io.realm.mongodb.User;
 import io.realm.mongodb.sync.SyncConfiguration;
 
 public class MelteeRealm {
+    private static App app;
     private static SyncConfiguration config;
 
-    public static synchronized void initialize(Context context) {
-        if(config == null) {
-            Realm.init(context);
-
-            App app = new App(new AppConfiguration.Builder("meltee-nbigl").build());
-
-            Credentials credentials = Credentials.anonymous();
-            app.loginAsync(credentials, result -> {
-                System.out.println("Successfully logged in!");
-                config = new SyncConfiguration.Builder(
-                        result.get(),"Meltee")
-                        .allowQueriesOnUiThread(true)
-                        .allowWritesOnUiThread(true)
-                        .build();
-            });
+    public static synchronized App getApp() {
+        if(app == null) {
+            app = new App(new AppConfiguration.Builder("meltee-nbigl").build());
         }
+        return app;
+    }
+
+    public static void makeConfig(User user) {
+        config = new SyncConfiguration.Builder(
+                user,"Meltee")
+                .allowQueriesOnUiThread(true)
+                .allowWritesOnUiThread(true)
+                .build();
     }
 
     public static Realm getInstance() {
-        while(config == null) {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
         return Realm.getInstance(config);
     }
 
     public static void insertPhoto(PhotoCard photoCard) {
-        getInstance().executeTransaction(transaction -> {
+        Realm instance = getInstance();
+        instance.executeTransaction(transaction -> {
             transaction.insert(photoCard);
         });
+        instance.close();
     }
 
     public static List<PhotoCard> getPhotos() {
-        return getInstance().copyFromRealm(getInstance().where(PhotoCard.class)
+        Realm instance = getInstance();
+        List<PhotoCard> realmList = instance.where(PhotoCard.class)
                 .equalTo("receiver", MainActivity.username)
                 .sort("_id", Sort.DESCENDING)
-                .findAll());
+                .findAll();
+        List<PhotoCard> photoCardList = instance.copyFromRealm(realmList);
+        instance.close();
+        return photoCardList;
     }
 }
