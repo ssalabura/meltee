@@ -15,7 +15,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.ssalabura.meltee.R;
 import com.ssalabura.meltee.database.MelteeRealm;
 import com.ssalabura.meltee.database.PhotoCard;
-import com.ssalabura.meltee.database.RealmPhotoCard;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,11 +45,7 @@ public class DashboardFragment extends Fragment {
     }
 
     private void refreshPhotoCards() {
-        List<RealmPhotoCard> realmPhotoCardList = MelteeRealm.getPhotos();
-        List<PhotoCard> photoCardList = new ArrayList<>();
-        for(RealmPhotoCard realmPhotoCard : realmPhotoCardList) {
-            photoCardList.add(new PhotoCard(realmPhotoCard));
-        }
+        List<PhotoCard> photoCardList = MelteeRealm.getPhotos();
         TextView empty = root.findViewById(R.id.textView_empty);
         if(photoCardList.size() > 0) {
             empty.setVisibility(View.INVISIBLE);

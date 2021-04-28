@@ -1,6 +1,8 @@
 package com.ssalabura.meltee.ui.addphoto;
 
 import android.Manifest;
+import android.app.Activity;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -29,7 +31,6 @@ import com.ssalabura.meltee.MainActivity;
 import com.ssalabura.meltee.R;
 import com.ssalabura.meltee.database.MelteeRealm;
 import com.ssalabura.meltee.database.PhotoCard;
-import com.ssalabura.meltee.database.RealmPhotoCard;
 import com.ssalabura.meltee.util.BitmapTools;
 
 import java.text.SimpleDateFormat;
@@ -39,9 +40,6 @@ import java.util.concurrent.ExecutionException;
 
 public class AddPhotoFragment extends Fragment
         implements AdditionalInfoDialogFragment.AdditionalInfoDialogListener, ReceiversDialogFragment.ReceiversDialogListener {
-    private static final String[] REQUIRED_PERMISSIONS = new String[]{Manifest.permission.CAMERA};
-    private static final int REQUEST_CODE_PERMISSIONS = 10;
-
     private AddPhotoViewHolder holder;
 
     private CameraSelector cameraSelector;
@@ -56,7 +54,7 @@ public class AddPhotoFragment extends Fragment
 
         if(!allPermissionsGranted()) {
             ActivityCompat.requestPermissions(
-                    getActivity(), REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS);
+                    getActivity(),new String[]{Manifest.permission.CAMERA},10);
         }
         cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA;
         startCamera();
@@ -126,9 +124,9 @@ public class AddPhotoFragment extends Fragment
             @Override
             public void onCaptureSuccess(@NonNull ImageProxy image) {
                 System.out.println("Photo capture succeeded.");
-                photoCard.timestamp = System.currentTimeMillis();
+                photoCard._id = System.currentTimeMillis();
                 holder.card_preview_holder.timestamp.setText(
-                        new SimpleDateFormat("KK:mm aa", Locale.ENGLISH).format(photoCard.timestamp));
+                        new SimpleDateFormat("KK:mm aa", Locale.ENGLISH).format(photoCard._id));
                 Bitmap bitmap = BitmapTools.fromImageProxy(image, cameraSelector);
                 photoCard.bitmap = bitmap;
                 int width = Resources.getSystem().getDisplayMetrics().widthPixels;
@@ -150,14 +148,17 @@ public class AddPhotoFragment extends Fragment
     }
 
     private void sendPhoto() {
+        Activity activity = getActivity();
+        activity.runOnUiThread(() -> {
+            ((BottomNavigationView)activity.findViewById(R.id.nav_view)).setSelectedItemId(R.id.navigation_dashboard);
+        });
+
         photoCard.photo = BitmapTools.toByteArray(photoCard.bitmap);
+        MelteeRealm.insertPhoto(photoCard);
 
-        MelteeRealm.insertPhoto(new RealmPhotoCard(photoCard));
-
-        getActivity().runOnUiThread(() -> {
-            Toast.makeText(getContext(), "Photo successfully sent.", Toast.LENGTH_SHORT).show();
+        activity.runOnUiThread(() -> {
+            Toast.makeText(activity, "Photo successfully sent.", Toast.LENGTH_SHORT).show();
             System.out.println("Photo successfully sent.");
-            ((BottomNavigationView)getActivity().findViewById(R.id.nav_view)).setSelectedItemId(R.id.navigation_dashboard);
         });
     }
 

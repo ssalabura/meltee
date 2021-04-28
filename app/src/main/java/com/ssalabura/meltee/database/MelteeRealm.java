@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.ssalabura.meltee.MainActivity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.Realm;
@@ -45,16 +46,16 @@ public class MelteeRealm {
         return Realm.getInstance(config);
     }
 
-    public static void insertPhoto(RealmPhotoCard photoCard) {
+    public static void insertPhoto(PhotoCard photoCard) {
         getInstance().executeTransaction(transaction -> {
             transaction.insert(photoCard);
         });
     }
 
-    public static List<RealmPhotoCard> getPhotos() {
-        return getInstance().where(RealmPhotoCard.class)
+    public static List<PhotoCard> getPhotos() {
+        return getInstance().copyFromRealm(getInstance().where(PhotoCard.class)
                 .equalTo("receiver", MainActivity.username)
                 .sort("_id", Sort.DESCENDING)
-                .findAll();
+                .findAll());
     }
 }
