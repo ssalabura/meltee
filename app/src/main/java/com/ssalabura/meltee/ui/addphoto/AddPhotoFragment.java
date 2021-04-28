@@ -2,6 +2,7 @@ package com.ssalabura.meltee.ui.addphoto;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Size;
@@ -26,18 +27,18 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.ssalabura.meltee.MainActivity;
 import com.ssalabura.meltee.R;
-import com.ssalabura.meltee.database.AppDatabase;
 import com.ssalabura.meltee.database.MelteeRealm;
 import com.ssalabura.meltee.database.PhotoCard;
-import com.ssalabura.meltee.database.PhotoCardDao;
 import com.ssalabura.meltee.database.RealmPhotoCard;
 import com.ssalabura.meltee.util.BitmapTools;
 
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
-public class AddPhotoFragment extends Fragment implements AdditionalInfoDialogFragment.AdditionalInfoDialogListener {
+public class AddPhotoFragment extends Fragment
+        implements AdditionalInfoDialogFragment.AdditionalInfoDialogListener, ReceiversDialogFragment.ReceiversDialogListener {
     private static final String[] REQUIRED_PERMISSIONS = new String[]{Manifest.permission.CAMERA};
     private static final int REQUEST_CODE_PERMISSIONS = 10;
 
@@ -79,7 +80,11 @@ public class AddPhotoFragment extends Fragment implements AdditionalInfoDialogFr
             dialogFragment.setArguments(bundle);
             dialogFragment.show(getParentFragmentManager(), "AdditionalInfoDialog");
         });
-        holder.button_send.setOnClickListener(v -> new Thread(this::onClickButtonSend).start());
+        holder.button_send.setOnClickListener(v -> {
+            DialogFragment dialogFragment = new ReceiversDialogFragment();
+            dialogFragment.setTargetFragment(this, 22);
+            dialogFragment.show(getParentFragmentManager(), "ReceiversDialog");
+        });
 
         photoCard = new PhotoCard();
         photoCard.sender = MainActivity.username;
@@ -126,7 +131,8 @@ public class AddPhotoFragment extends Fragment implements AdditionalInfoDialogFr
                         new SimpleDateFormat("KK:mm aa", Locale.ENGLISH).format(photoCard.timestamp));
                 Bitmap bitmap = BitmapTools.fromImageProxy(image, cameraSelector);
                 photoCard.bitmap = bitmap;
-                holder.card_preview_holder.photo.setImageBitmap(bitmap);
+                int width = Resources.getSystem().getDisplayMetrics().widthPixels;
+                holder.card_preview_holder.photo.setImageBitmap(Bitmap.createScaledBitmap(bitmap, width, width*4/3, true));
                 holder.changeState(AddPhotoViewHolder.State.PHOTO_TAKEN);
                 image.close();
             }
@@ -143,18 +149,14 @@ public class AddPhotoFragment extends Fragment implements AdditionalInfoDialogFr
         holder.changeState(AddPhotoViewHolder.State.PHOTO_NOT_TAKEN);
     }
 
-    private void onClickButtonSend() {
+    private void sendPhoto() {
         photoCard.photo = BitmapTools.toByteArray(photoCard.bitmap);
 
-        //TODO: send to online database
         MelteeRealm.insertPhoto(new RealmPhotoCard(photoCard));
 
-        AppDatabase db = AppDatabase.getInstance(getContext());
-        PhotoCardDao photoCardDao = db.photoCardDao();
-        photoCardDao.insert(photoCard);
         getActivity().runOnUiThread(() -> {
-            Toast.makeText(getContext(), "Photo successfully saved.", Toast.LENGTH_SHORT).show();
-            System.out.println("Photo successfully saved.");
+            Toast.makeText(getContext(), "Photo successfully sent.", Toast.LENGTH_SHORT).show();
+            System.out.println("Photo successfully sent.");
             ((BottomNavigationView)getActivity().findViewById(R.id.nav_view)).setSelectedItemId(R.id.navigation_dashboard);
         });
     }
@@ -180,5 +182,11 @@ public class AddPhotoFragment extends Fragment implements AdditionalInfoDialogFr
     public void onDialogPositiveClick(String message) {
         photoCard.message = message;
         holder.card_preview_holder.message.setText(message);
+    }
+
+    @Override
+    public void onDialogPositiveClick(List<String> receivers) {
+        photoCard.receiver = receivers.get(0);
+        new Thread(this::sendPhoto).start();
     }
 }

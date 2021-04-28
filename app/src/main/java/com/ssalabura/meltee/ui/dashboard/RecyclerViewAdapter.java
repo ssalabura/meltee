@@ -1,6 +1,9 @@
 package com.ssalabura.meltee.ui.dashboard;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,7 +44,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<PhotoCardViewHolde
 
         holder.sender.setText(photoCard.sender);
         holder.timestamp.setText(new SimpleDateFormat("KK:mm aa", Locale.ENGLISH).format(photoCard.timestamp));
-        holder.photo.setImageBitmap(BitmapTools.fromByteArray(photoCard.photo));
+        int width = Resources.getSystem().getDisplayMetrics().widthPixels;
+        holder.photo.setImageBitmap(Bitmap.createScaledBitmap(BitmapTools.fromByteArray(photoCard.photo), width, width*4/3, true));
         holder.message.setText(photoCard.message);
     }
 

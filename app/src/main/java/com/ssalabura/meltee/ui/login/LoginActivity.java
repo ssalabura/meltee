@@ -118,7 +118,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
         // auto-login
-        loginViewModel.login("admin","admin");
+        passwordEditText.setText("1234567890");
     }
 
     private void updateUiWithUser(LoggedInUserView model) {

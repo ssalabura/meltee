@@ -14,22 +14,24 @@ import androidx.fragment.app.DialogFragment;
 
 import com.ssalabura.meltee.R;
 
-public class AdditionalInfoDialogFragment extends DialogFragment {
+import java.util.ArrayList;
+import java.util.List;
 
-    public interface AdditionalInfoDialogListener {
-        void onDialogPositiveClick(String message);
+public class ReceiversDialogFragment extends DialogFragment {
+    public interface ReceiversDialogListener {
+        void onDialogPositiveClick(List<String> receivers);
     }
 
-    AdditionalInfoDialogListener listener;
+    ReceiversDialogListener listener;
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         try {
-            listener = (AdditionalInfoDialogListener) getTargetFragment();
+            listener = (ReceiversDialogListener) getTargetFragment();
         } catch (ClassCastException e) {
             throw new ClassCastException(getTargetFragment().toString()
-                    + " must implement AdditionalInfoDialogListener");
+                    + " must implement ReceiversDialogListener");
         }
     }
 
@@ -38,11 +40,12 @@ public class AdditionalInfoDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.dialog_additional_info, null);
-        ((EditText)view.findViewById(R.id.dialog_message)).setText(getArguments().getString("message"));
+        View view = inflater.inflate(R.layout.dialog_receivers, null);
         builder.setView(view)
                 .setPositiveButton("OK", (dialog, id) -> {
-                    listener.onDialogPositiveClick(((EditText)view.findViewById(R.id.dialog_message)).getText().toString());
+                    List<String> receivers = new ArrayList<>();
+                    receivers.add(((EditText)view.findViewById(R.id.dialog_receiver)).getText().toString());
+                    listener.onDialogPositiveClick(receivers);
                 });
 
         return builder.create();

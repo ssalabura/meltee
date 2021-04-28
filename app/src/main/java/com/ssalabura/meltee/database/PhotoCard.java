@@ -11,6 +11,7 @@ public class PhotoCard {
     @PrimaryKey(autoGenerate = true)
     public int id;
     public String sender;
+    public String receiver;
     public long timestamp;
     public byte[] photo;
     public String message;
@@ -28,5 +29,13 @@ public class PhotoCard {
         this.timestamp = timestamp;
         this.photo = photo;
         this.message = message;
+    }
+
+    public PhotoCard(RealmPhotoCard realmPhotoCard) {
+        this.sender = realmPhotoCard.sender;
+        this.receiver = realmPhotoCard.receiver;
+        this.timestamp = realmPhotoCard._id;
+        this.photo = realmPhotoCard.photo;
+        this.message = realmPhotoCard.message;
     }
 }
