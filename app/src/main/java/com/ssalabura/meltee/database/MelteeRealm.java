@@ -1,6 +1,11 @@
 package com.ssalabura.meltee.database;
 
+import com.ssalabura.meltee.MainActivity;
+
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.function.Predicate;
 
 import io.realm.Realm;
 import io.realm.Sort;
@@ -42,10 +47,14 @@ public class MelteeRealm {
 
     public static List<PhotoCard> getPhotos() {
         Realm instance = getInstance();
-        List<PhotoCard> realmList = instance.where(PhotoCard.class)
-                .sort("_id", Sort.DESCENDING)
-                .findAll();
-        List<PhotoCard> photoCardList = instance.copyFromRealm(realmList);
+        List<PhotoCard> realmList = instance.where(PhotoCard.class).findAll();
+        List<PhotoCard> photoCardList = new ArrayList<>();
+        for(PhotoCard photoCard : realmList) {
+            if(photoCard.receivers.where().equalTo("_id", MainActivity.username).findFirst() != null) {
+                photoCardList.add(instance.copyFromRealm(photoCard));
+            }
+        }
+        photoCardList.sort((o1, o2) -> Long.compare(o2._id, o1._id));
         instance.close();
         return photoCardList;
     }
