@@ -45,6 +45,7 @@ public class ReceiversDialogFragment extends DialogFragment {
                 .setPositiveButton("OK", (dialog, id) -> {
                     List<String> receivers = new ArrayList<>();
                     receivers.add(((EditText)view.findViewById(R.id.dialog_receiver)).getText().toString());
+                    receivers.add("test_hardcoded");
                     listener.onDialogPositiveClick(receivers);
                 });
 

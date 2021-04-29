@@ -1,9 +1,5 @@
 package com.ssalabura.meltee.database;
 
-import android.content.Context;
-
-import com.ssalabura.meltee.MainActivity;
-
 import java.util.List;
 
 import io.realm.Realm;
@@ -39,7 +35,7 @@ public class MelteeRealm {
     public static void insertPhoto(PhotoCard photoCard) {
         Realm instance = getInstance();
         instance.executeTransaction(transaction -> {
-            transaction.insert(photoCard);
+            transaction.insertOrUpdate(photoCard);
         });
         instance.close();
     }
@@ -47,7 +43,6 @@ public class MelteeRealm {
     public static List<PhotoCard> getPhotos() {
         Realm instance = getInstance();
         List<PhotoCard> realmList = instance.where(PhotoCard.class)
-                .equalTo("receiver", MainActivity.username)
                 .sort("_id", Sort.DESCENDING)
                 .findAll();
         List<PhotoCard> photoCardList = instance.copyFromRealm(realmList);

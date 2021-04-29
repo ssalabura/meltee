@@ -2,7 +2,6 @@ package com.ssalabura.meltee.ui.addphoto;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -31,12 +30,15 @@ import com.ssalabura.meltee.MainActivity;
 import com.ssalabura.meltee.R;
 import com.ssalabura.meltee.database.MelteeRealm;
 import com.ssalabura.meltee.database.PhotoCard;
+import com.ssalabura.meltee.database.Username;
 import com.ssalabura.meltee.util.BitmapTools;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
+
+import io.realm.RealmList;
 
 public class AddPhotoFragment extends Fragment
         implements AdditionalInfoDialogFragment.AdditionalInfoDialogListener, ReceiversDialogFragment.ReceiversDialogListener {
@@ -105,7 +107,8 @@ public class AddPhotoFragment extends Fragment
             preview.setSurfaceProvider(holder.previewView.getSurfaceProvider());
 
             imageCapture = new ImageCapture.Builder()
-                    .setTargetResolution(new Size(1080,1440))
+                    //.setTargetResolution(new Size(1080,1440))
+                    .setTargetResolution(new Size(108,144)) // TEMPORARY for faster queries
                     .setCaptureMode(ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY)
                     .build();
 
@@ -153,6 +156,7 @@ public class AddPhotoFragment extends Fragment
             ((BottomNavigationView)activity.findViewById(R.id.nav_view)).setSelectedItemId(R.id.navigation_dashboard);
         });
 
+        photoCard.partition_key = "Meltee";
         photoCard.photo = BitmapTools.toByteArray(photoCard.bitmap);
         MelteeRealm.insertPhoto(photoCard);
 
@@ -187,7 +191,10 @@ public class AddPhotoFragment extends Fragment
 
     @Override
     public void onDialogPositiveClick(List<String> receivers) {
-        photoCard.receiver = receivers.get(0);
+        photoCard.receivers = new RealmList<>();
+        for(String receiver : receivers) {
+            photoCard.receivers.add(new Username(receiver));
+        }
         new Thread(this::sendPhoto).start();
     }
 }
