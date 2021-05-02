@@ -2,7 +2,8 @@ package com.ssalabura.meltee.database;
 
 import android.graphics.Bitmap;
 
-import io.realm.RealmList;
+import java.util.List;
+
 import io.realm.RealmObject;
 import io.realm.annotations.Ignore;
 import io.realm.annotations.PrimaryKey;
@@ -14,10 +15,11 @@ public class PhotoCard extends RealmObject {
     @Required
     public String partition_key;
     public String sender;
-    public RealmList<Username> receivers;
     public byte[] photo;
     public String message;
 
+    @Ignore
+    public List<String> receivers;
     @Ignore
     public Bitmap bitmap;
 

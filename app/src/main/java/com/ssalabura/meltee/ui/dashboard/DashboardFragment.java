@@ -32,11 +32,10 @@ public class DashboardFragment extends Fragment {
 
         swipeRefreshLayout = root.findViewById(R.id.swipeRefresh);
         swipeRefreshLayout.setOnRefreshListener(() -> {
-            //TODO: read from online database and write to local
             new Thread(this::refreshPhotoCards).start();
         });
 
-        recyclerView.setAdapter(new RecyclerViewAdapter(getContext(), new ArrayList<>()));
+        recyclerView.setAdapter(new PhotoCardViewAdapter(getContext(), new ArrayList<>()));
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
 
@@ -53,7 +52,7 @@ public class DashboardFragment extends Fragment {
             empty.setVisibility(View.VISIBLE);
         }
         getActivity().runOnUiThread(() -> {
-            recyclerView.setAdapter(new RecyclerViewAdapter(getContext(), photoCardList));
+            recyclerView.setAdapter(new PhotoCardViewAdapter(getContext(), photoCardList));
             swipeRefreshLayout.setRefreshing(false);
         });
     }

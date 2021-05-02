@@ -30,7 +30,7 @@ public class LoginViewModel extends ViewModel {
     public void login(String username, String password) {
         MelteeRealm.getApp().loginAsync(Credentials.emailPassword(username, password), result -> {
             if(result.isSuccess()) {
-                MelteeRealm.makeConfig(result.get());
+                MelteeRealm.setConfig(result.get(), username);
                 loginResult.setValue(new LoginResult(new LoggedInUserView(username)));
             } else {
                 loginResult.setValue(new LoginResult(R.string.login_failed));

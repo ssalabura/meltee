@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         android:layout_marginBottom="150dp" />
 
-    <include layout="@layout/cardview_item_layout"
+    <include layout="@layout/cardview_photocard"
         android:id="@+id/card_preview" />
 
     <Button

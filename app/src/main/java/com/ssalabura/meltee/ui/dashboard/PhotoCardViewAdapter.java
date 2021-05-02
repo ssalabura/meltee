@@ -18,22 +18,19 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 
-public class RecyclerViewAdapter extends RecyclerView.Adapter<PhotoCardViewHolder> {
-
+public class PhotoCardViewAdapter extends RecyclerView.Adapter<PhotoCardViewHolder> {
+    private LayoutInflater inflater;
     private List<PhotoCard> photoCardList;
-    private Context context;
-    private LayoutInflater mLayoutInflater;
 
-    public RecyclerViewAdapter(Context context, List<PhotoCard> photoCardList) {
-        this.context = context;
+    public PhotoCardViewAdapter(Context context, List<PhotoCard> photoCardList) {
+        this.inflater = LayoutInflater.from(context);
         this.photoCardList = photoCardList;
-        this.mLayoutInflater = LayoutInflater.from(context);
     }
 
     @NonNull
     @Override
     public PhotoCardViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View photoCardViewItem = mLayoutInflater.inflate(R.layout.cardview_item_layout, parent, false);
+        View photoCardViewItem = inflater.inflate(R.layout.cardview_photocard, parent, false);
         return new PhotoCardViewHolder(photoCardViewItem);
     }
 
@@ -50,6 +47,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<PhotoCardViewHolde
 
     @Override
     public int getItemCount() {
-        return this.photoCardList.size();
+        return photoCardList.size();
     }
 }

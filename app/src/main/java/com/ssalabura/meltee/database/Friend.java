@@ -4,18 +4,18 @@ import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 import io.realm.annotations.Required;
 
-public class Username extends RealmObject {
+public class Friend extends RealmObject {
     @PrimaryKey
     public String _id;
     @Required
     public String partition_key;
 
-    public Username() {
+    public Friend() {
 
     }
 
-    public Username(String username) {
+    public Friend(String username, String partition_key) {
         this._id = username;
-        this.partition_key = "Meltee";
+        this.partition_key = partition_key;
     }
 }

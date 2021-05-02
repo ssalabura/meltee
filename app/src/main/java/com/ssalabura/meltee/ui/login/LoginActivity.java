@@ -102,6 +102,8 @@ public class LoginActivity extends AppCompatActivity {
             loginViewModel.login(usernameEditText.getText().toString(),
                     passwordEditText.getText().toString());
         });
+        // auto login
+        loginViewModel.login("szymon","1234567890");
     }
 
     private void updateUiWithUser(LoggedInUserView model) {

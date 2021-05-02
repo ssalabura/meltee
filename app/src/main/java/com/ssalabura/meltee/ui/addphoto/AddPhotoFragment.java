@@ -30,15 +30,12 @@ import com.ssalabura.meltee.MainActivity;
 import com.ssalabura.meltee.R;
 import com.ssalabura.meltee.database.MelteeRealm;
 import com.ssalabura.meltee.database.PhotoCard;
-import com.ssalabura.meltee.database.Username;
 import com.ssalabura.meltee.util.BitmapTools;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
-
-import io.realm.RealmList;
 
 public class AddPhotoFragment extends Fragment
         implements AdditionalInfoDialogFragment.AdditionalInfoDialogListener, ReceiversDialogFragment.ReceiversDialogListener {
@@ -127,7 +124,6 @@ public class AddPhotoFragment extends Fragment
             @Override
             public void onCaptureSuccess(@NonNull ImageProxy image) {
                 System.out.println("Photo capture succeeded.");
-                photoCard._id = System.currentTimeMillis();
                 holder.card_preview_holder.timestamp.setText(
                         new SimpleDateFormat("KK:mm aa", Locale.ENGLISH).format(photoCard._id));
                 Bitmap bitmap = BitmapTools.fromImageProxy(image, cameraSelector);
@@ -156,7 +152,6 @@ public class AddPhotoFragment extends Fragment
             ((BottomNavigationView)activity.findViewById(R.id.nav_view)).setSelectedItemId(R.id.navigation_dashboard);
         });
 
-        photoCard.partition_key = "Meltee";
         photoCard.photo = BitmapTools.toByteArray(photoCard.bitmap);
         MelteeRealm.insertPhoto(photoCard);
 
@@ -191,10 +186,7 @@ public class AddPhotoFragment extends Fragment
 
     @Override
     public void onDialogPositiveClick(List<String> receivers) {
-        photoCard.receivers = new RealmList<>();
-        for(String receiver : receivers) {
-            photoCard.receivers.add(new Username(receiver));
-        }
+        photoCard.receivers = receivers;
         new Thread(this::sendPhoto).start();
     }
 }
