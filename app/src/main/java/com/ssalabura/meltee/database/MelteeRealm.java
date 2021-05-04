@@ -42,7 +42,6 @@ public class MelteeRealm {
         for(String receiver : photoCard.receivers) {
             photoCard._id = System.currentTimeMillis();
             photoCard.partition_key = receiver;
-            System.out.println("Inserting with partiton key: " + photoCard.partition_key);
             Realm instance = getInstance(receiver);
             instance.executeTransaction(transaction -> {
                 transaction.insertOrUpdate(photoCard);
