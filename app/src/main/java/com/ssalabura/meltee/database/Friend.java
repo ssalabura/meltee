@@ -6,7 +6,8 @@ import io.realm.annotations.Required;
 
 public class Friend extends RealmObject {
     @PrimaryKey
-    public String _id;
+    public long _id;
+    public String username;
     @Required
     public String partition_key;
 
@@ -15,7 +16,7 @@ public class Friend extends RealmObject {
     }
 
     public Friend(String username, String partition_key) {
-        this._id = username;
+        this.username = username;
         this.partition_key = partition_key;
     }
 }

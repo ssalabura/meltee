@@ -25,9 +25,7 @@ public class BitmapTools {
         if(cameraSelector == CameraSelector.DEFAULT_FRONT_CAMERA) {
             matrix.postScale(-1,1);
         }
-        Bitmap rotated = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-        bitmap.recycle();
-        return rotated;
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
     }
 
     public static byte[] toByteArray(Bitmap bitmap) {

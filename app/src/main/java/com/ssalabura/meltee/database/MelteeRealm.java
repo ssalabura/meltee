@@ -67,7 +67,15 @@ public class MelteeRealm {
     public static void insertFriend(String friendName) {
         Realm instance = getInstance(username);
         instance.executeTransaction(transaction -> {
-            transaction.insertOrUpdate(new Friend(friendName, username));
+            Friend newFriend = new Friend(friendName, username);
+            newFriend._id = System.currentTimeMillis();
+            transaction.insertOrUpdate(newFriend);
+            // temporary fix for different ids
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         });
         instance.close();
     }
@@ -77,7 +85,7 @@ public class MelteeRealm {
         List<Friend> realmFriends = instance.where(Friend.class).findAll();
         List<String> output = new ArrayList<>();
         for(Friend friend : realmFriends) {
-            output.add(friend._id);
+            output.add(friend.username);
         }
         instance.close();
         return output;
@@ -87,7 +95,7 @@ public class MelteeRealm {
         Realm instance = getInstance(username);
         List<Friend> realmFriends = instance.where(Friend.class).findAll();
         for(Friend friend : realmFriends) {
-            if(friend._id.equals(friendName)) {
+            if(friend.username.equals(friendName)) {
                 instance.executeTransaction(transaction -> {
                     friend.deleteFromRealm();
                 });

@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.ssalabura.meltee.R;
 import com.ssalabura.meltee.database.MelteeRealm;
-import com.ssalabura.meltee.ui.addphoto.ReceiversDialogFragment;
 
 public class FriendsFragment extends Fragment implements NewFriendDialogFragment.NewFriendDialogListener {
     View root;
