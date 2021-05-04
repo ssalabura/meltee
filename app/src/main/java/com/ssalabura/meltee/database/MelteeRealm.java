@@ -21,9 +21,9 @@ public class MelteeRealm {
         return app;
     }
 
-    public static void setConfig(User user, String username) {
-        MelteeRealm.user = user;
-        MelteeRealm.username = username;
+    public static void setConfig(User newUser, String newUsername) {
+        user = newUser;
+        username = newUsername;
     }
 
     private static SyncConfiguration getConfig(String partitionValue) {
@@ -64,10 +64,10 @@ public class MelteeRealm {
         return photoCardList;
     }
 
-    public static void insertFriend(String friend) {
+    public static void insertFriend(String friendName) {
         Realm instance = getInstance(username);
         instance.executeTransaction(transaction -> {
-            transaction.insertOrUpdate(new Friend(friend, username));
+            transaction.insertOrUpdate(new Friend(friendName, username));
         });
         instance.close();
     }
@@ -83,12 +83,16 @@ public class MelteeRealm {
         return output;
     }
 
-    public static void removeFriend(String friend) {
-        // TODO
-//        Realm instance = getInstance();
-//        instance.executeTransaction(transaction -> {
-//            friend.deleteFromRealm();
-//        });
-//        instance.close();
+    public static void removeFriend(String friendName) {
+        Realm instance = getInstance(username);
+        List<Friend> realmFriends = instance.where(Friend.class).findAll();
+        for(Friend friend : realmFriends) {
+            if(friend._id.equals(friendName)) {
+                instance.executeTransaction(transaction -> {
+                    friend.deleteFromRealm();
+                });
+            }
+        }
+        instance.close();
     }
 }
