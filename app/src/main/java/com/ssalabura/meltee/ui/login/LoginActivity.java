@@ -103,7 +103,7 @@ public class LoginActivity extends AppCompatActivity {
                     passwordEditText.getText().toString());
         });
         // auto login
-        loginViewModel.login("szymon","1234567890");
+        loginViewModel.login("test","test12");
     }
 
     private void updateUiWithUser(LoggedInUserView model) {

@@ -6,15 +6,16 @@ import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.ssalabura.meltee.R;
+import com.ssalabura.meltee.database.MelteeRealm;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ReceiversDialogFragment extends DialogFragment {
@@ -41,12 +42,16 @@ public class ReceiversDialogFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_receivers, null);
+        RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
+
+        ClickableFriendViewAdapter adapter = new ClickableFriendViewAdapter(getContext(), MelteeRealm.getFriends());
+        recyclerView.setAdapter(adapter);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        recyclerView.setLayoutManager(linearLayoutManager);
+
         builder.setView(view)
                 .setPositiveButton("OK", (dialog, id) -> {
-                    List<String> receivers = new ArrayList<>();
-                    receivers.add(((EditText)view.findViewById(R.id.dialog_receiver)).getText().toString());
-                    receivers.add("test_hardcoded");
-                    listener.onDialogPositiveClick(receivers);
+                    listener.onDialogPositiveClick(adapter.getSelected());
                 });
 
         return builder.create();

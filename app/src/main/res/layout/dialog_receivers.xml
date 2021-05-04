@@ -14,15 +14,9 @@
         android:layout_marginBottom="4dp"
         android:text="@string/dialog_receiver" />
 
-    <EditText
-        android:id="@+id/dialog_receiver"
-        android:inputType="text"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="4dp"
-        android:hint="@string/hint_message" />
+        android:layout_height="match_parent" />
 
 </LinearLayout>
