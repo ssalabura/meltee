@@ -42,13 +42,16 @@ public class LoginActivity extends AppCompatActivity {
         final EditText usernameEditText = findViewById(R.id.username);
         final EditText passwordEditText = findViewById(R.id.password);
         final Button loginButton = findViewById(R.id.login);
+        final Button registerButton = findViewById(R.id.register);
         final ProgressBar loadingProgressBar = findViewById(R.id.loading);
 
         loginViewModel.getLoginFormState().observe(this, loginFormState -> {
             if (loginFormState == null) {
                 return;
             }
-            loginButton.setEnabled(loginFormState.isDataValid());
+            boolean isDataValid = loginFormState.isDataValid();
+            loginButton.setEnabled(isDataValid);
+            registerButton.setEnabled(isDataValid);
             if (loginFormState.getUsernameError() != null) {
                 usernameEditText.setError(getString(loginFormState.getUsernameError()));
             }
@@ -63,12 +66,22 @@ public class LoginActivity extends AppCompatActivity {
             }
             loadingProgressBar.setVisibility(View.GONE);
             if (loginResult.getError() != null) {
-                showLoginFailed(loginResult.getError());
+                showErrorToast(loginResult.getError());
             }
             if (loginResult.getSuccess() != null) {
                 updateUiWithUser(loginResult.getSuccess());
             }
             setResult(Activity.RESULT_OK);
+        });
+
+        loginViewModel.getRegisterResult().observe(this, registerResult -> {
+            if(registerResult == null) {
+                return;
+            }
+            loadingProgressBar.setVisibility(View.GONE);
+            if(registerResult.getError() != null) {
+                showErrorToast(registerResult.getError());
+            }
         });
 
         TextWatcher afterTextChangedListener = new TextWatcher() {
@@ -104,6 +117,12 @@ public class LoginActivity extends AppCompatActivity {
                     passwordEditText.getText().toString(), this);
         });
 
+        registerButton.setOnClickListener(v -> {
+            loadingProgressBar.setVisibility(View.VISIBLE);
+            loginViewModel.register(usernameEditText.getText().toString(),
+                    passwordEditText.getText().toString(), this);
+        });
+
         // try to login automatically
         SharedPreferences preferences = getPreferences(MODE_PRIVATE);
         if(preferences.contains("username") && preferences.contains("password")) {
@@ -116,7 +135,7 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    private void updateUiWithUser(LoggedInUserView model) {
+    private void updateUiWithUser(AuthUserDetails model) {
         String welcome = getString(R.string.welcome) + " " + model.getDisplayName();
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
         intent.putExtra("username", model.getDisplayName());
@@ -124,7 +143,7 @@ public class LoginActivity extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
     }
 
-    private void showLoginFailed(@StringRes Integer errorString) {
+    private void showErrorToast(@StringRes Integer errorString) {
         Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
     }
 }

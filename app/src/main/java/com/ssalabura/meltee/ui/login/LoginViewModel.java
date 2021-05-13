@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModel;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Patterns;
 
 import com.ssalabura.meltee.R;
 import com.ssalabura.meltee.database.MelteeRealm;
@@ -17,7 +16,8 @@ import io.realm.mongodb.Credentials;
 public class LoginViewModel extends ViewModel {
 
     private MutableLiveData<LoginFormState> loginFormState = new MutableLiveData<>();
-    private MutableLiveData<LoginResult> loginResult = new MutableLiveData<>();
+    private MutableLiveData<AuthResult> loginResult = new MutableLiveData<>();
+    private MutableLiveData<AuthResult> registerResult = new MutableLiveData<>();
 
     LoginViewModel() {
     }
@@ -26,8 +26,12 @@ public class LoginViewModel extends ViewModel {
         return loginFormState;
     }
 
-    LiveData<LoginResult> getLoginResult() {
+    LiveData<AuthResult> getLoginResult() {
         return loginResult;
+    }
+
+    LiveData<AuthResult> getRegisterResult() {
+        return registerResult;
     }
 
     public void login(String username, String password, Activity activity) {
@@ -35,9 +39,20 @@ public class LoginViewModel extends ViewModel {
             if(result.isSuccess()) {
                 MelteeRealm.setConfig(result.get(), username);
                 saveCredentials(username, password, activity);
-                loginResult.setValue(new LoginResult(new LoggedInUserView(username)));
+                loginResult.setValue(new AuthResult(new AuthUserDetails(username)));
             } else {
-                loginResult.setValue(new LoginResult(R.string.login_failed));
+                loginResult.setValue(new AuthResult(R.string.login_failed));
+            }
+        });
+    }
+
+    public void register(String username, String password, Activity activity) {
+        MelteeRealm.getApp().getEmailPassword().registerUserAsync(username, password, result -> {
+            if(result.isSuccess()) {
+                registerResult.setValue(new AuthResult(new AuthUserDetails(username)));
+                login(username, password, activity);
+            } else {
+                registerResult.setValue(new AuthResult(R.string.register_failed));
             }
         });
     }
@@ -53,14 +68,15 @@ public class LoginViewModel extends ViewModel {
     }
 
     private boolean isUserNameValid(String username) {
-        if (username == null || username.contains("|")) {
-            return false;
-        }
-        return !username.trim().isEmpty();
+        return username != null &&
+                !username.contains("|") &&
+                !username.trim().isEmpty() &&
+                username.trim().length() <= 20;
     }
 
     private boolean isPasswordValid(String password) {
-        return password != null && password.trim().length() > 5;
+        return password != null &&
+                password.trim().length() > 5;
     }
 
     private void saveCredentials(String username, String password, Activity activity) {
