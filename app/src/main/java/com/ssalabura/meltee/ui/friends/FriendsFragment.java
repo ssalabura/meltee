@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
@@ -45,7 +46,14 @@ public class FriendsFragment extends Fragment implements NewFriendDialogFragment
 
     @Override
     public void onDialogPositiveClick(String username) {
-        MelteeRealm.insertFriend(username);
-        recyclerView.setAdapter(new FriendViewAdapter(getContext(), this, MelteeRealm.getFriends()));
+        if(username == null ||
+                username.contains("|") ||
+                username.trim().length() <= 3 ||
+                username.trim().length() > 20) {
+            Toast.makeText(getContext(), R.string.invalid_username, Toast.LENGTH_SHORT).show();
+        } else {
+            MelteeRealm.insertFriend(username);
+            recyclerView.setAdapter(new FriendViewAdapter(getContext(), this, MelteeRealm.getFriends()));
+        }
     }
 }

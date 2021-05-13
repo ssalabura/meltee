@@ -70,7 +70,7 @@ public class LoginViewModel extends ViewModel {
     private boolean isUserNameValid(String username) {
         return username != null &&
                 !username.contains("|") &&
-                !username.trim().isEmpty() &&
+                username.trim().length() > 3 &&
                 username.trim().length() <= 20;
     }
 

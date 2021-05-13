@@ -18,6 +18,7 @@
     <string name="title_friends">Friends</string>
     <string name="wip">Work in progress</string>
     <string name="hint_message">(empty)</string>
+    <string name="never">never</string>
     <string name="dialog_message">Message:</string>
     <string name="dialog_receiver">Send to:</string>
 </resources>

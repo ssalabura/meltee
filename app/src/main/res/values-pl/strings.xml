@@ -20,4 +20,5 @@
     <string name="hint_message">(brak)</string>
     <string name="dialog_message">Wiadomość:</string>
     <string name="dialog_receiver">Wyślij do:</string>
+    <string name="never">nigdy</string>
 </resources>

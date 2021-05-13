@@ -38,7 +38,11 @@ public class FriendViewAdapter extends RecyclerView.Adapter<FriendViewHolder> {
 
         holder.button_remove.setOnClickListener(v -> fragment.removeFriend(friend.username));
         holder.username.setText(friend.username);
-        holder.lastPhotoTimestamp.setText(DateUtils.getRelativeTimeSpanString(friend.lastPhotoTimestamp));
+        if(friend.lastPhotoTimestamp != 0) {
+            holder.lastPhotoTimestamp.setText(DateUtils.getRelativeTimeSpanString(friend.lastPhotoTimestamp));
+        } else {
+            holder.lastPhotoTimestamp.setText(R.string.never);
+        }
     }
 
     @Override
