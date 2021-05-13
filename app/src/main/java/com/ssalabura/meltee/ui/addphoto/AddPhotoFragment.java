@@ -45,6 +45,8 @@ public class AddPhotoFragment extends Fragment
     private ImageCapture imageCapture;
     private PhotoCard photoCard;
 
+    private final Size resolution = new Size(600,800); // for faster queries, should be higher
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_add_photo, container, false);
@@ -104,8 +106,7 @@ public class AddPhotoFragment extends Fragment
             preview.setSurfaceProvider(holder.previewView.getSurfaceProvider());
 
             imageCapture = new ImageCapture.Builder()
-                    //.setTargetResolution(new Size(1080,1440))
-                    .setTargetResolution(new Size(108,144)) // TEMPORARY for faster queries
+                    .setTargetResolution(resolution)
                     .setCaptureMode(ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY)
                     .build();
 
