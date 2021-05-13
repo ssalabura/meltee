@@ -39,7 +39,7 @@ public class PhotoCardViewAdapter extends RecyclerView.Adapter<PhotoCardViewHold
         PhotoCard photoCard = this.photoCardList.get(position);
 
         holder.sender.setText(photoCard.sender);
-        holder.timestamp.setText(new SimpleDateFormat("KK:mm aa", Locale.ENGLISH).format(photoCard._id));
+        holder.timestamp.setText(new SimpleDateFormat("KK:mm aa", Locale.ENGLISH).format(photoCard.timestamp));
         int width = Resources.getSystem().getDisplayMetrics().widthPixels;
         holder.photo.setImageBitmap(Bitmap.createScaledBitmap(BitmapTools.fromByteArray(photoCard.photo), width, width*4/3, true));
         holder.message.setText(photoCard.message);

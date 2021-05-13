@@ -11,10 +11,11 @@ import io.realm.annotations.Required;
 
 public class PhotoCard extends RealmObject {
     @PrimaryKey
-    public long _id; //timestamp
+    public String _id;
     @Required
     public String partition_key;
     public String sender;
+    public long timestamp;
     public byte[] photo;
     public String message;
 
@@ -23,7 +24,5 @@ public class PhotoCard extends RealmObject {
     @Ignore
     public Bitmap bitmap;
 
-    public PhotoCard() {
-
-    }
+    public PhotoCard() { }
 }

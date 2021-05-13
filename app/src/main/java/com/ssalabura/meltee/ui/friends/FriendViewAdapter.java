@@ -1,6 +1,7 @@
 package com.ssalabura.meltee.ui.friends;
 
 import android.content.Context;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,15 +10,16 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ssalabura.meltee.R;
+import com.ssalabura.meltee.database.Friend;
 
 import java.util.List;
 
 public class FriendViewAdapter extends RecyclerView.Adapter<FriendViewHolder> {
     private FriendsFragment fragment;
     private LayoutInflater inflater;
-    private List<String> friendsList;
+    private List<Friend> friendsList;
 
-    public FriendViewAdapter(Context context, FriendsFragment fragment, List<String> friendsList) {
+    public FriendViewAdapter(Context context, FriendsFragment fragment, List<Friend> friendsList) {
         this.fragment = fragment;
         this.inflater = LayoutInflater.from(context);
         this.friendsList = friendsList;
@@ -32,10 +34,11 @@ public class FriendViewAdapter extends RecyclerView.Adapter<FriendViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull FriendViewHolder holder, int position) {
-        String friend = friendsList.get(position);
+        Friend friend = friendsList.get(position);
 
-        holder.button_remove.setOnClickListener(v -> fragment.removeFriend(friend));
-        holder.friend.setText(friend);
+        holder.button_remove.setOnClickListener(v -> fragment.removeFriend(friend.username));
+        holder.username.setText(friend.username);
+        holder.lastPhotoTimestamp.setText(DateUtils.getRelativeTimeSpanString(friend.lastPhotoTimestamp));
     }
 
     @Override

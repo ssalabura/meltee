@@ -11,12 +11,14 @@ import com.ssalabura.meltee.R;
 
 public class FriendViewHolder extends RecyclerView.ViewHolder {
     public Button button_remove;
-    public TextView friend;
+    public TextView username;
+    public TextView lastPhotoTimestamp;
 
     public FriendViewHolder(@NonNull View itemView) {
         super(itemView);
 
         button_remove = itemView.findViewById(R.id.button_remove);
-        friend = itemView.findViewById(R.id.textView_friend);
+        username = itemView.findViewById(R.id.textView_username);
+        lastPhotoTimestamp = itemView.findViewById(R.id.textView_lastPhotoTimestamp);
     }
 }

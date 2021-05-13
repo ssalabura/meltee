@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.Realm;
+import io.realm.Sort;
 import io.realm.mongodb.App;
 import io.realm.mongodb.AppConfiguration;
 import io.realm.mongodb.User;
@@ -40,61 +41,58 @@ public class MelteeRealm {
 
     public static void insertPhoto(PhotoCard photoCard) {
         for(String receiver : photoCard.receivers) {
-            photoCard._id = System.currentTimeMillis();
+            photoCard._id = username + "|" + receiver + "|" + photoCard.timestamp;
             photoCard.partition_key = receiver;
             Realm instance = getInstance(receiver);
             instance.executeTransaction(transaction -> {
                 transaction.insertOrUpdate(photoCard);
             });
             instance.close();
-            // temporary fix for different ids
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
         }
+
+        List<Friend> updatedFriends = new ArrayList<>();
+        for(String receiver : photoCard.receivers) {
+            Friend friend = new Friend(receiver, username);
+            friend.lastPhotoTimestamp = photoCard.timestamp;
+            updatedFriends.add(friend);
+        }
+        Realm instance = getInstance(username);
+        instance.executeTransaction(transaction -> {
+            transaction.insertOrUpdate(updatedFriends);
+        });
+        instance.close();
     }
 
     public static List<PhotoCard> getPhotos() {
         Realm instance = getInstance(username);
-        List<PhotoCard> photoCardList = instance.copyFromRealm(instance.where(PhotoCard.class).findAll());
-        photoCardList.sort((o1, o2) -> Long.compare(o2._id, o1._id));
+        List<PhotoCard> photoCardList = instance.copyFromRealm(
+                instance.where(PhotoCard.class).findAll().sort("timestamp", Sort.DESCENDING));
         instance.close();
         return photoCardList;
     }
 
     public static void insertFriend(String friendName) {
+        // TODO: check if user exists
         Realm instance = getInstance(username);
+        Friend newFriend = new Friend(friendName, username);
+        newFriend.lastPhotoTimestamp = 0;
         instance.executeTransaction(transaction -> {
-            Friend newFriend = new Friend(friendName, username);
-            newFriend._id = System.currentTimeMillis();
             transaction.insertOrUpdate(newFriend);
-            // temporary fix for different ids
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
         });
         instance.close();
     }
 
-    public static List<String> getFriends() {
+    public static List<Friend> getFriends() {
         Realm instance = getInstance(username);
-        List<Friend> realmFriends = instance.where(Friend.class).findAll();
-        List<String> output = new ArrayList<>();
-        for(Friend friend : realmFriends) {
-            output.add(friend.username);
-        }
+        List<Friend> friendList = instance.copyFromRealm(
+                instance.where(Friend.class).findAll().sort("lastPhotoTimestamp", Sort.DESCENDING));
         instance.close();
-        return output;
+        return friendList;
     }
 
     public static void removeFriend(String friendName) {
         Realm instance = getInstance(username);
-        List<Friend> realmFriends = instance.where(Friend.class).findAll();
-        for(Friend friend : realmFriends) {
+        for(Friend friend : instance.where(Friend.class).findAll()) {
             if(friend.username.equals(friendName)) {
                 instance.executeTransaction(transaction -> {
                     friend.deleteFromRealm();

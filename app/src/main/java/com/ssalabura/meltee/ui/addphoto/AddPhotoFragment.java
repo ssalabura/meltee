@@ -124,8 +124,9 @@ public class AddPhotoFragment extends Fragment
             @Override
             public void onCaptureSuccess(@NonNull ImageProxy image) {
                 System.out.println("Photo capture succeeded.");
+                photoCard.timestamp = System.currentTimeMillis();
                 holder.card_preview_holder.timestamp.setText(
-                        new SimpleDateFormat("KK:mm aa", Locale.ENGLISH).format(photoCard._id));
+                        new SimpleDateFormat("KK:mm aa", Locale.ENGLISH).format(photoCard.timestamp));
                 Bitmap bitmap = BitmapTools.fromImageProxy(image, cameraSelector);
                 photoCard.bitmap = bitmap;
                 int width = Resources.getSystem().getDisplayMetrics().widthPixels;

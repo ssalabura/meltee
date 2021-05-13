@@ -9,16 +9,17 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ssalabura.meltee.R;
+import com.ssalabura.meltee.database.Friend;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ClickableFriendViewAdapter extends RecyclerView.Adapter<ClickableFriendViewHolder> {
     private LayoutInflater inflater;
-    private List<String> friendsList;
+    private List<Friend> friendsList;
     private List<String> selectedFriends;
 
-    public ClickableFriendViewAdapter(Context context, List<String> friendsList) {
+    public ClickableFriendViewAdapter(Context context, List<Friend> friendsList) {
         this.inflater = LayoutInflater.from(context);
         this.friendsList = friendsList;
         selectedFriends = new ArrayList<>();
@@ -33,16 +34,16 @@ public class ClickableFriendViewAdapter extends RecyclerView.Adapter<ClickableFr
 
     @Override
     public void onBindViewHolder(@NonNull ClickableFriendViewHolder holder, int position) {
-        String friendUsername = friendsList.get(position);
+        Friend friend = friendsList.get(position);
         holder.cardView.setOnClickListener(v -> {
             holder.click();
             if(holder.selected) {
-                selectedFriends.add(friendUsername);
+                selectedFriends.add(friend.username);
             } else {
-                selectedFriends.remove(friendUsername);
+                selectedFriends.remove(friend.username);
             }
         });
-        holder.friend.setText(friendsList.get(position));
+        holder.username.setText(friend.username);
     }
 
     @Override

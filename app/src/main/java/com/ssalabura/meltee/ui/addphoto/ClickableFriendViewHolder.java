@@ -12,14 +12,14 @@ import com.ssalabura.meltee.R;
 
 public class ClickableFriendViewHolder extends RecyclerView.ViewHolder {
     public CardView cardView;
-    public TextView friend;
+    public TextView username;
     public boolean selected;
 
     public ClickableFriendViewHolder(@NonNull View itemView) {
         super(itemView);
 
         cardView = (CardView)itemView;
-        friend = itemView.findViewById(R.id.textView_friend);
+        username = itemView.findViewById(R.id.textView_username);
     }
 
     public void click() {
