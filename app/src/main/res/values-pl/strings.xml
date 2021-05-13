@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Meltee</string>
+    <string name="username">Nazwa użytkownika</string>
+    <string name="password">Hasło</string>
+    <string name="action_sign_in">Zaloguj się lub zarejestruj</string>
+    <string name="action_sign_in_short">Zaloguj się</string>
+    <string name="welcome">Zalogowano jako</string>
+    <string name="invalid_username">Niepoprawna nazwa użytkownika</string>
+    <string name="invalid_password">Hasło musi składać się z >5 znaków</string>
+    <string name="login_failed">Nieudana próba logowania</string>
+
+    <string name="title_dashboard">Otrzymane</string>
+    <string name="title_add_photo">Wyślij</string>
+    <string name="dashboard_empty">Brak zdjęć :(\nSprawdź później!</string>
+    <string name="take_photo">Zrób zdjęcie</string>
+    <string name="title_friends">Znajomi</string>
+    <string name="wip">Już niedługo</string>
+    <string name="hint_message">(brak)</string>
+    <string name="dialog_message">Wiadomość:</string>
+    <string name="dialog_receiver">Wyślij do:</string>
+</resources>
