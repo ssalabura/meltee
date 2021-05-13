@@ -4,6 +4,9 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Patterns;
 
 import com.ssalabura.meltee.R;
@@ -27,10 +30,11 @@ public class LoginViewModel extends ViewModel {
         return loginResult;
     }
 
-    public void login(String username, String password) {
+    public void login(String username, String password, Activity activity) {
         MelteeRealm.getApp().loginAsync(Credentials.emailPassword(username, password), result -> {
             if(result.isSuccess()) {
                 MelteeRealm.setConfig(result.get(), username);
+                saveCredentials(username, password, activity);
                 loginResult.setValue(new LoginResult(new LoggedInUserView(username)));
             } else {
                 loginResult.setValue(new LoginResult(R.string.login_failed));
@@ -48,20 +52,22 @@ public class LoginViewModel extends ViewModel {
         }
     }
 
-    // A placeholder username validation check
     private boolean isUserNameValid(String username) {
-        if (username == null) {
+        if (username == null || username.contains("|")) {
             return false;
         }
-        if (username.contains("@")) {
-            return Patterns.EMAIL_ADDRESS.matcher(username).matches();
-        } else {
-            return !username.trim().isEmpty();
-        }
+        return !username.trim().isEmpty();
     }
 
-    // A placeholder password validation check
     private boolean isPasswordValid(String password) {
         return password != null && password.trim().length() > 5;
+    }
+
+    private void saveCredentials(String username, String password, Activity activity) {
+        SharedPreferences preferences = activity.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("username", username);
+        editor.putString("password", password);
+        editor.apply();
     }
 }

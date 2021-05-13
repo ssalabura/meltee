@@ -5,6 +5,7 @@ import android.app.Activity;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.StringRes;
@@ -92,7 +93,7 @@ public class LoginActivity extends AppCompatActivity {
         passwordEditText.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 loginViewModel.login(usernameEditText.getText().toString(),
-                        passwordEditText.getText().toString());
+                        passwordEditText.getText().toString(), this);
             }
             return false;
         });
@@ -100,10 +101,19 @@ public class LoginActivity extends AppCompatActivity {
         loginButton.setOnClickListener(v -> {
             loadingProgressBar.setVisibility(View.VISIBLE);
             loginViewModel.login(usernameEditText.getText().toString(),
-                    passwordEditText.getText().toString());
+                    passwordEditText.getText().toString(), this);
         });
-        // auto login
-//        loginViewModel.login("test","test12");
+
+        // try to login automatically
+        SharedPreferences preferences = getPreferences(MODE_PRIVATE);
+        if(preferences.contains("username") && preferences.contains("password")) {
+            String username = preferences.getString("username","");
+            String password = preferences.getString("password","");
+            usernameEditText.setText(username);
+            passwordEditText.setText(password);
+            loadingProgressBar.setVisibility(View.VISIBLE);
+            loginViewModel.login(username, password, this);
+        }
     }
 
     private void updateUiWithUser(LoggedInUserView model) {
