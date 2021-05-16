@@ -1,6 +1,5 @@
 package com.ssalabura.meltee.ui.addphoto;
 
-import android.graphics.Color;
 import android.view.View;
 import android.widget.TextView;
 
@@ -27,7 +26,7 @@ public class ClickableFriendViewHolder extends RecyclerView.ViewHolder {
             cardView.setCardBackgroundColor(0xFFEAE5E5);
             selected = false;
         } else {
-            cardView.setCardBackgroundColor(Color.WHITE);
+            cardView.setCardBackgroundColor(0xFFA5A0A0);
             selected = true;
         }
     }

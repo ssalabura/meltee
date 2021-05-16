@@ -5,6 +5,7 @@
     <string name="password">Password</string>
     <string name="action_sign_in">Sign in</string>
     <string name="action_register">Register</string>
+    <string name="sign_out">Sign out</string>
     <string name="welcome">Logged in as</string>
     <string name="invalid_username">Not a valid username</string>
     <string name="invalid_password">Password must be >5 characters</string>

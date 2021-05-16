@@ -21,6 +21,16 @@ public class MelteeRealm {
         }
         return app;
     }
+    
+    public static void logOut() {
+        user.logOutAsync(result -> {
+            if(result.isSuccess()) {
+                System.out.println("Successfully logged out.");
+            } else {
+                System.out.println("Logout failed: " + result.getError().getErrorMessage());
+            }
+        });
+    }
 
     public static void setConfig(User newUser, String newUsername) {
         user = newUser;
@@ -72,7 +82,6 @@ public class MelteeRealm {
     }
 
     public static void insertFriend(String friendName) {
-        // TODO: check if user exists
         Realm instance = getInstance(username);
         Friend newFriend = new Friend(friendName, username);
         newFriend.lastPhotoTimestamp = 0;

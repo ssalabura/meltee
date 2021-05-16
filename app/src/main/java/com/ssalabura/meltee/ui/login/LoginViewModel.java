@@ -42,6 +42,7 @@ public class LoginViewModel extends ViewModel {
                 loginResult.setValue(new AuthResult(new AuthUserDetails(username)));
             } else {
                 loginResult.setValue(new AuthResult(R.string.login_failed));
+                System.out.println("Login failed: " + result.getError().getErrorMessage());
             }
         });
     }

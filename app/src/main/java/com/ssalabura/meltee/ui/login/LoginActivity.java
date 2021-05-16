@@ -123,15 +123,17 @@ public class LoginActivity extends AppCompatActivity {
                     passwordEditText.getText().toString(), this);
         });
 
-        // try to login automatically
         SharedPreferences preferences = getPreferences(MODE_PRIVATE);
         if(preferences.contains("username") && preferences.contains("password")) {
             String username = preferences.getString("username","");
             String password = preferences.getString("password","");
             usernameEditText.setText(username);
             passwordEditText.setText(password);
-            loadingProgressBar.setVisibility(View.VISIBLE);
-            loginViewModel.login(username, password, this);
+
+            if(getIntent().getExtras() == null || getIntent().getExtras().getBoolean("autologin")) {
+                loadingProgressBar.setVisibility(View.VISIBLE);
+                loginViewModel.login(username, password, this);
+            }
         }
     }
 

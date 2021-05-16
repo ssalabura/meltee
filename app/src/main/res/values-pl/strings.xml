@@ -5,6 +5,7 @@
     <string name="password">Hasło</string>
     <string name="action_sign_in">Zaloguj się</string>
     <string name="action_register">Załóż konto</string>
+    <string name="sign_out">Wyloguj się</string>
     <string name="welcome">Zalogowano jako</string>
     <string name="invalid_username">Niepoprawna nazwa użytkownika</string>
     <string name="invalid_password">Hasło musi składać się z >5 znaków</string>
