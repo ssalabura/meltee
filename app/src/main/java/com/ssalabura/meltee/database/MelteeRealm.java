@@ -38,11 +38,12 @@ public class MelteeRealm {
     }
 
     private static SyncConfiguration getConfig(String partitionValue) {
-        return new SyncConfiguration.Builder(
+        SyncConfiguration.Builder builder = new SyncConfiguration.Builder(
                 user,partitionValue)
                 .allowQueriesOnUiThread(true)
-                .allowWritesOnUiThread(true)
-                .build();
+                .allowWritesOnUiThread(true);
+        if(partitionValue.equals(username)) return builder.build();
+        return builder.inMemory().build();
     }
 
     public static Realm getInstance(String partitionValue) {
