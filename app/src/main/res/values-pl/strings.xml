@@ -5,21 +5,25 @@
     <string name="password">Hasło</string>
     <string name="action_sign_in">Zaloguj się</string>
     <string name="action_register">Załóż konto</string>
-    <string name="sign_out">Wyloguj się</string>
-    <string name="welcome">Zalogowano jako</string>
     <string name="invalid_username">Niepoprawna nazwa użytkownika</string>
     <string name="invalid_password">Hasło musi składać się z >5 znaków</string>
     <string name="login_failed">Nieudana próba logowania</string>
     <string name="register_failed">Nieudana próba rejestracji</string>
+    <string name="welcome">Zalogowano jako</string>
+    <string name="sign_out">Wyloguj się</string>
 
     <string name="title_dashboard">Otrzymane</string>
-    <string name="title_add_photo">Wyślij</string>
     <string name="dashboard_empty">Brak zdjęć :(\nSprawdź później!</string>
-    <string name="take_photo">Zrób zdjęcie</string>
-    <string name="title_friends">Znajomi</string>
-    <string name="wip">Już niedługo</string>
-    <string name="hint_message">(brak)</string>
+    <string name="no_receivers">Nie wybrano odbiorcy.</string>
+
+    <string name="title_add_photo">Wyślij</string>
     <string name="dialog_message">Wiadomość:</string>
     <string name="dialog_receiver">Wyślij do:</string>
+    <string name="photo_success">Pomyślnie wysłano.</string>
+
+    <string name="title_friends">Znajomi</string>
     <string name="never">nigdy</string>
+
+    <string name="hint_message">(brak)</string>
+    <string name="error">Błąd:</string>
 </resources>

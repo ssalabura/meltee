@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 
 import androidx.annotation.NonNull;
@@ -41,10 +42,13 @@ public class AdditionalInfoDialogFragment extends DialogFragment {
         View view = inflater.inflate(R.layout.dialog_additional_info, null);
         ((EditText)view.findViewById(R.id.dialog_message)).setText(getArguments().getString("message"));
         builder.setView(view)
+                .setTitle(getString(R.string.dialog_message))
                 .setPositiveButton("OK", (dialog, id) -> {
                     listener.onDialogPositiveClick(((EditText)view.findViewById(R.id.dialog_message)).getText().toString());
                 });
 
-        return builder.create();
+        AlertDialog dialog = builder.create();
+        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        return dialog;
     }
 }

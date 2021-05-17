@@ -42,8 +42,7 @@ public class MelteeRealm {
                 user,partitionValue)
                 .allowQueriesOnUiThread(true)
                 .allowWritesOnUiThread(true);
-        if(partitionValue.equals(username)) return builder.build();
-        return builder.inMemory().build();
+        return builder.build();
     }
 
     public static Realm getInstance(String partitionValue) {
@@ -51,6 +50,7 @@ public class MelteeRealm {
     }
 
     public static void insertPhoto(PhotoCard photoCard) {
+        photoCard.timestamp = System.currentTimeMillis();
         for(String receiver : photoCard.receivers) {
             photoCard._id = username + "|" + receiver + "|" + photoCard.timestamp;
             photoCard.partition_key = receiver;

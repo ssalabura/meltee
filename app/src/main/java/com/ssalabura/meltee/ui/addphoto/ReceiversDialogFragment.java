@@ -50,6 +50,7 @@ public class ReceiversDialogFragment extends DialogFragment {
         recyclerView.setLayoutManager(linearLayoutManager);
 
         builder.setView(view)
+                .setTitle(getString(R.string.dialog_receiver))
                 .setPositiveButton("OK", (dialog, id) -> {
                     listener.onDialogPositiveClick(adapter.getSelected());
                 });

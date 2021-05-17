@@ -138,7 +138,7 @@ public class AddPhotoFragment extends Fragment
 
             @Override
             public void onError(@NonNull ImageCaptureException exception) {
-                Toast.makeText(getContext(), "Failed: " + exception.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), getString(R.string.error) + " " + exception.getMessage(), Toast.LENGTH_SHORT).show();
                 System.out.println("Photo capture failed: " + exception.getMessage());
             }
         });
@@ -158,7 +158,7 @@ public class AddPhotoFragment extends Fragment
         MelteeRealm.insertPhoto(photoCard);
 
         activity.runOnUiThread(() -> {
-            Toast.makeText(activity, "Photo successfully sent.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, activity.getString(R.string.photo_success), Toast.LENGTH_SHORT).show();
             System.out.println("Photo successfully sent.");
         });
     }
@@ -188,7 +188,11 @@ public class AddPhotoFragment extends Fragment
 
     @Override
     public void onDialogPositiveClick(List<String> receivers) {
-        photoCard.receivers = receivers;
-        new Thread(this::sendPhoto).start();
+        if(receivers.size() == 0) {
+            Toast.makeText(getActivity(), getString(R.string.no_receivers), Toast.LENGTH_SHORT).show();
+        } else {
+            photoCard.receivers = receivers;
+            new Thread(this::sendPhoto).start();
+        }
     }
 }

@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 
 import androidx.annotation.NonNull;
@@ -39,10 +40,13 @@ public class NewFriendDialogFragment extends DialogFragment {
         LayoutInflater inflater = requireActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_new_friend, null);
         builder.setView(view)
+                .setTitle(getString(R.string.username))
                 .setPositiveButton("OK", (dialog, id) -> {
                     listener.onDialogPositiveClick(((EditText)view.findViewById(R.id.dialog_new_friend_username)).getText().toString());
                 });
 
-        return builder.create();
+        AlertDialog dialog = builder.create();
+        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        return dialog;
     }
 }
