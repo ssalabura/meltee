@@ -76,8 +76,7 @@ public class LoginActivity extends AppCompatActivity {
                 showErrorToast(loginResult.getError());
             }
             if (loginResult.getSuccess() != null) {
-                saveCredentials(usernameEditText.getText().toString(),
-                        passwordEditText.getText().toString());
+                saveCredentials(preferences, usernameEditText.getText().toString());
                 showLoginToast(usernameEditText.getText().toString());
                 goToMainActivity(loginResult.getSuccess());
             }
@@ -133,20 +132,18 @@ public class LoginActivity extends AppCompatActivity {
                     passwordEditText.getText().toString(), this);
         });
 
-        if(preferences.contains("username") && preferences.contains("password")) {
-            String username = preferences.getString("username","");
-            String password = preferences.getString("password","");
-            usernameEditText.setText(username);
-            passwordEditText.setText(password);
+        if(preferences.contains("username")) {
+            usernameEditText.setText(preferences.getString("username",""));
         }
     }
 
-    private void saveCredentials(String username, String password) {
-        SharedPreferences preferences = getPreferences(Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString("username", username);
-        editor.putString("password", password);
-        editor.apply();
+    private void saveCredentials(SharedPreferences preferences, String username) {
+        preferences.edit().putString("username", username).apply();
+    }
+
+    private void showLoginToast(String username) {
+        String welcome = getString(R.string.welcome) + " " + username;
+        Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
     }
 
     private void goToMainActivity(AuthUserDetails model) {
@@ -154,11 +151,6 @@ public class LoginActivity extends AppCompatActivity {
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
         intent.putExtra("username", model.getDisplayName());
         startActivity(intent);
-    }
-
-    private void showLoginToast(String username) {
-        String welcome = getString(R.string.welcome) + " " + username;
-        Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
     }
 
     private void showErrorToast(@StringRes Integer errorString) {
