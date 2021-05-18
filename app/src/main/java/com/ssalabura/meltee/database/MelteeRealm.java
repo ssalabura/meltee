@@ -21,6 +21,15 @@ public class MelteeRealm {
         }
         return app;
     }
+
+    public static void setConfig(User newUser, String newUsername) {
+        user = newUser;
+        username = newUsername;
+
+        // TODO: notification service with this:
+//        Realm myRealm = getInstance(username);
+//        myRealm.addChangeListener(realm -> System.out.println("Change detected!"));
+    }
     
     public static void logOut() {
         user.logOutAsync(result -> {
@@ -30,11 +39,6 @@ public class MelteeRealm {
                 System.out.println("Logout failed: " + result.getError().getErrorMessage());
             }
         });
-    }
-
-    public static void setConfig(User newUser, String newUsername) {
-        user = newUser;
-        username = newUsername;
     }
 
     private static SyncConfiguration getConfig(String partitionValue) {
@@ -56,7 +60,7 @@ public class MelteeRealm {
             photoCard.partition_key = receiver;
             Realm instance = getInstance(receiver);
             instance.executeTransaction(transaction -> {
-                transaction.insertOrUpdate(photoCard);
+                transaction.insert(photoCard);
             });
             instance.close();
         }
@@ -87,7 +91,7 @@ public class MelteeRealm {
         Friend newFriend = new Friend(friendName, username);
         newFriend.lastPhotoTimestamp = 0;
         instance.executeTransaction(transaction -> {
-            transaction.insertOrUpdate(newFriend);
+            transaction.insert(newFriend);
         });
         instance.close();
     }

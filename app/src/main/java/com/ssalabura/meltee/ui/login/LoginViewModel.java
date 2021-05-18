@@ -5,8 +5,6 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.SharedPreferences;
 
 import com.ssalabura.meltee.R;
 import com.ssalabura.meltee.database.MelteeRealm;
@@ -34,12 +32,10 @@ public class LoginViewModel extends ViewModel {
         return registerResult;
     }
 
-    public void login(String username, String password, Activity activity) {
+    public void login(String username, String password) {
         MelteeRealm.getApp().loginAsync(Credentials.emailPassword(username, password), result -> {
             if(result.isSuccess()) {
-                MelteeRealm.setConfig(result.get(), username);
-                saveCredentials(username, password, activity);
-                loginResult.setValue(new AuthResult(new AuthUserDetails(username)));
+                loginResult.setValue(new AuthResult(new AuthUserDetails(result.get(), username)));
             } else {
                 loginResult.setValue(new AuthResult(R.string.login_failed));
                 System.out.println("Login failed: " + result.getError().getErrorMessage());
@@ -50,8 +46,8 @@ public class LoginViewModel extends ViewModel {
     public void register(String username, String password, Activity activity) {
         MelteeRealm.getApp().getEmailPassword().registerUserAsync(username, password, result -> {
             if(result.isSuccess()) {
-                registerResult.setValue(new AuthResult(new AuthUserDetails(username)));
-                login(username, password, activity);
+                registerResult.setValue(new AuthResult(new AuthUserDetails(null, username)));
+                login(username, password);
             } else {
                 registerResult.setValue(new AuthResult(R.string.register_failed));
             }
@@ -78,13 +74,5 @@ public class LoginViewModel extends ViewModel {
     private boolean isPasswordValid(String password) {
         return password != null &&
                 password.trim().length() > 5;
-    }
-
-    private void saveCredentials(String username, String password, Activity activity) {
-        SharedPreferences preferences = activity.getPreferences(Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString("username", username);
-        editor.putString("password", password);
-        editor.apply();
     }
 }

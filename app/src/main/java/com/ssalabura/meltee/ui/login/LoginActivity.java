@@ -4,6 +4,7 @@ import android.app.Activity;
 
 import androidx.lifecycle.ViewModelProvider;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -22,18 +23,24 @@ import android.widget.Toast;
 
 import com.ssalabura.meltee.MainActivity;
 import com.ssalabura.meltee.R;
+import com.ssalabura.meltee.database.MelteeRealm;
 
 import io.realm.Realm;
+import io.realm.mongodb.User;
 
 public class LoginActivity extends AppCompatActivity {
-
     private LoginViewModel loginViewModel;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         Realm.init(this);
+        SharedPreferences preferences = getPreferences(MODE_PRIVATE);
+
+        User user = MelteeRealm.getApp().currentUser();
+        if(user != null && preferences.contains("username")) {
+            goToMainActivity(new AuthUserDetails(user, preferences.getString("username","")));
+        }
 
         setContentView(R.layout.activity_login);
         loginViewModel = new ViewModelProvider(this, new LoginViewModelFactory())
@@ -69,7 +76,10 @@ public class LoginActivity extends AppCompatActivity {
                 showErrorToast(loginResult.getError());
             }
             if (loginResult.getSuccess() != null) {
-                updateUiWithUser(loginResult.getSuccess());
+                saveCredentials(usernameEditText.getText().toString(),
+                        passwordEditText.getText().toString());
+                showLoginToast(usernameEditText.getText().toString());
+                goToMainActivity(loginResult.getSuccess());
             }
             setResult(Activity.RESULT_OK);
         });
@@ -106,7 +116,7 @@ public class LoginActivity extends AppCompatActivity {
         passwordEditText.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 loginViewModel.login(usernameEditText.getText().toString(),
-                        passwordEditText.getText().toString(), this);
+                        passwordEditText.getText().toString());
             }
             return false;
         });
@@ -114,7 +124,7 @@ public class LoginActivity extends AppCompatActivity {
         loginButton.setOnClickListener(v -> {
             loadingProgressBar.setVisibility(View.VISIBLE);
             loginViewModel.login(usernameEditText.getText().toString(),
-                    passwordEditText.getText().toString(), this);
+                    passwordEditText.getText().toString());
         });
 
         registerButton.setOnClickListener(v -> {
@@ -123,25 +133,31 @@ public class LoginActivity extends AppCompatActivity {
                     passwordEditText.getText().toString(), this);
         });
 
-        SharedPreferences preferences = getPreferences(MODE_PRIVATE);
         if(preferences.contains("username") && preferences.contains("password")) {
             String username = preferences.getString("username","");
             String password = preferences.getString("password","");
             usernameEditText.setText(username);
             passwordEditText.setText(password);
-
-            if(getIntent().getExtras() == null || getIntent().getExtras().getBoolean("autologin")) {
-                loadingProgressBar.setVisibility(View.VISIBLE);
-                loginViewModel.login(username, password, this);
-            }
         }
     }
 
-    private void updateUiWithUser(AuthUserDetails model) {
-        String welcome = getString(R.string.welcome) + " " + model.getDisplayName();
+    private void saveCredentials(String username, String password) {
+        SharedPreferences preferences = getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("username", username);
+        editor.putString("password", password);
+        editor.apply();
+    }
+
+    private void goToMainActivity(AuthUserDetails model) {
+        MelteeRealm.setConfig(model.getUser(), model.getDisplayName());
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
         intent.putExtra("username", model.getDisplayName());
         startActivity(intent);
+    }
+
+    private void showLoginToast(String username) {
+        String welcome = getString(R.string.welcome) + " " + username;
         Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
     }
 
