@@ -4,7 +4,6 @@ import android.app.Activity;
 
 import androidx.lifecycle.ViewModelProvider;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -12,6 +11,7 @@ import android.os.Bundle;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -31,11 +31,13 @@ import io.realm.mongodb.User;
 public class LoginActivity extends AppCompatActivity {
     private LoginViewModel loginViewModel;
 
+    // TODO: make it simpler, without unnecessary errors on EditTexts etc
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Realm.init(this);
-        SharedPreferences preferences = getPreferences(MODE_PRIVATE);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         User user = MelteeRealm.getApp().currentUser();
         if(user != null && preferences.contains("username")) {
@@ -147,7 +149,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void goToMainActivity(AuthUserDetails model) {
-        MelteeRealm.setConfig(model.getUser(), model.getDisplayName());
+        MelteeRealm.setConfig(getApplicationContext(), model.getUser(), model.getDisplayName());
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
         intent.putExtra("username", model.getDisplayName());
         startActivity(intent);

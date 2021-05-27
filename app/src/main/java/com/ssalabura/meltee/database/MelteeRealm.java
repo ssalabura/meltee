@@ -1,5 +1,7 @@
 package com.ssalabura.meltee.database;
 
+import android.content.Context;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,13 +24,13 @@ public class MelteeRealm {
         return app;
     }
 
-    public static void setConfig(User newUser, String newUsername) {
+    public static void setConfig(Context context, User newUser, String newUsername) {
         user = newUser;
         username = newUsername;
 
-        // TODO: notification service with this:
-//        Realm myRealm = getInstance(username);
-//        myRealm.addChangeListener(realm -> System.out.println("Change detected!"));
+        getInstance(username).addChangeListener(
+                realm -> RealmNotificationManager.reactToChanges(context)
+        );
     }
     
     public static void logOut() {
