@@ -6,35 +6,21 @@ import android.content.Intent;
 import android.database.CursorWindow;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.ssalabura.meltee.database.MelteeRealm;
 import com.ssalabura.meltee.ui.login.LoginActivity;
-import com.ssalabura.meltee.work.SyncWorker;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-import androidx.work.Constraints;
-import androidx.work.ExistingPeriodicWorkPolicy;
-import androidx.work.OneTimeWorkRequest;
-import androidx.work.PeriodicWorkRequest;
-import androidx.work.WorkInfo;
-import androidx.work.WorkManager;
-import androidx.work.WorkQuery;
-import androidx.work.WorkRequest;
 
 import java.lang.reflect.Field;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
     public static String username;
@@ -42,8 +28,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        username = getIntent().getExtras().getString("username");
         setContentView(R.layout.activity_main);
+        username = getIntent().getExtras().getString("username");
         BottomNavigationView navView = findViewById(R.id.nav_view);
 
         try {

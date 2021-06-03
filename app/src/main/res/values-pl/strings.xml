@@ -17,13 +17,15 @@
     <string name="no_receivers">Nie wybrano odbiorcy.</string>
 
     <string name="title_add_photo">Wyślij</string>
+    <string name="additional_info">Dodatkowe informacje</string>
     <string name="dialog_message">Wiadomość:</string>
+    <string name="dialog_location">Lokalizacja:</string>
     <string name="dialog_receiver">Wyślij do:</string>
     <string name="photo_success">Pomyślnie wysłano.</string>
 
     <string name="title_friends">Znajomi</string>
     <string name="never">nigdy</string>
 
-    <string name="hint_message">(brak)</string>
+    <string name="hint_empty">(brak)</string>
     <string name="error">Błąd:</string>
 </resources>

@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
@@ -41,7 +42,9 @@ public class LoginActivity extends AppCompatActivity {
 
         User user = MelteeRealm.getApp().currentUser();
         if(user != null && preferences.contains("username")) {
-            goToMainActivity(new AuthUserDetails(user, preferences.getString("username","")));
+            String username = preferences.getString("username","");
+            Log.d("Meltee", "Automatically logging in as " + username);
+            goToMainActivity(new AuthUserDetails(user, username));
         }
 
         setContentView(R.layout.activity_login);

@@ -43,6 +43,9 @@ public class PhotoCardViewAdapter extends RecyclerView.Adapter<PhotoCardViewHold
         int width = Resources.getSystem().getDisplayMetrics().widthPixels;
         holder.photo.setImageBitmap(Bitmap.createScaledBitmap(BitmapTools.fromByteArray(photoCard.photo), width, width*4/3, true));
         holder.message.setText(photoCard.message);
+        if(photoCard.message == null || photoCard.message.isEmpty()) holder.message.setVisibility(View.GONE);
+        holder.location.setText(photoCard.location);
+        if(photoCard.location == null || photoCard.location.isEmpty()) holder.location.setVisibility(View.GONE);
     }
 
     @Override

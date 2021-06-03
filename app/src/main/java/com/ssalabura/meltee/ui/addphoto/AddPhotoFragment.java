@@ -5,6 +5,10 @@ import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Size;
 import android.view.LayoutInflater;
@@ -32,10 +36,14 @@ import com.ssalabura.meltee.database.MelteeRealm;
 import com.ssalabura.meltee.database.PhotoCard;
 import com.ssalabura.meltee.util.BitmapTools;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
+
+import static android.content.Context.LOCATION_SERVICE;
 
 public class AddPhotoFragment extends Fragment
         implements AdditionalInfoDialogFragment.AdditionalInfoDialogListener, ReceiversDialogFragment.ReceiversDialogListener {
@@ -53,12 +61,29 @@ public class AddPhotoFragment extends Fragment
         holder = new AddPhotoViewHolder(root);
         holder.changeState(AddPhotoViewHolder.State.PHOTO_NOT_TAKEN);
 
-        if(!allPermissionsGranted()) {
-            ActivityCompat.requestPermissions(
-                    getActivity(),new String[]{Manifest.permission.CAMERA},10);
+        if(ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(getActivity(),new String[]{Manifest.permission.CAMERA},0);
         }
         cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA;
         startCamera();
+
+        // get location
+        ArrayList<String> locationList = new ArrayList<>();
+        locationList.add(getString(R.string.hint_empty));
+        LocationManager locationManager = (LocationManager) getContext().getSystemService(LOCATION_SERVICE);
+        ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION},0);
+        if(ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            Geocoder geocoder = new Geocoder(getContext());
+            try {
+                List<Address> addressList = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 5);
+                for(Address address : addressList) {
+                    locationList.add(address.getAddressLine(0));
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
         holder.button_flip_camera.setOnClickListener(v -> {
             if(cameraSelector == CameraSelector.DEFAULT_BACK_CAMERA) {
@@ -76,6 +101,8 @@ public class AddPhotoFragment extends Fragment
             dialogFragment.setTargetFragment(this, 22);
             Bundle bundle = new Bundle();
             bundle.putString("message", holder.card_preview_holder.message.getText().toString());
+            bundle.putStringArrayList("location_list", locationList);
+            bundle.putString("location", holder.card_preview_holder.location.getText().toString());
             dialogFragment.setArguments(bundle);
             dialogFragment.show(getParentFragmentManager(), "AdditionalInfoDialog");
         });
@@ -88,6 +115,8 @@ public class AddPhotoFragment extends Fragment
         photoCard = new PhotoCard();
         photoCard.sender = MainActivity.username;
         holder.card_preview_holder.sender.setText(MainActivity.username);
+        holder.card_preview_holder.message.setVisibility(View.GONE);
+        holder.card_preview_holder.location.setVisibility(View.GONE);
         return root;
     }
 
@@ -113,11 +142,6 @@ public class AddPhotoFragment extends Fragment
             cameraProvider.unbindAll();
             cameraProvider.bindToLifecycle(getActivity(), cameraSelector, preview, imageCapture);
         }, ContextCompat.getMainExecutor(getContext()));
-    }
-
-    private boolean allPermissionsGranted() {
-        return ActivityCompat.checkSelfPermission(
-                getActivity(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
     }
 
     private void takePhoto() {
@@ -181,9 +205,21 @@ public class AddPhotoFragment extends Fragment
     }
 
     @Override
-    public void onDialogPositiveClick(String message) {
+    public void onDialogPositiveClick(String message, String location) {
         photoCard.message = message;
+        photoCard.location = location;
         holder.card_preview_holder.message.setText(message);
+        if(message == null || message.isEmpty()) {
+            holder.card_preview_holder.message.setVisibility(View.GONE);
+        } else {
+            holder.card_preview_holder.message.setVisibility(View.VISIBLE);
+        }
+        holder.card_preview_holder.location.setText(location);
+        if(location == null || location.isEmpty()) {
+            holder.card_preview_holder.location.setVisibility(View.GONE);
+        } else {
+            holder.card_preview_holder.location.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override

@@ -18,6 +18,7 @@ public class PhotoCard extends RealmObject {
     public long timestamp;
     public byte[] photo;
     public String message;
+    public String location;
 
     @Ignore
     public List<String> receivers;

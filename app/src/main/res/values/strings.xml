@@ -17,13 +17,15 @@
     <string name="no_receivers">No receivers selected.</string>
 
     <string name="title_add_photo">Send</string>
+    <string name="additional_info">Additional info</string>
     <string name="dialog_message">Message:</string>
+    <string name="dialog_location">Location:</string>
     <string name="dialog_receiver">Send to:</string>
     <string name="photo_success">Photo successfully sent.</string>
 
     <string name="title_friends">Friends</string>
     <string name="never">never</string>
 
-    <string name="hint_message">(empty)</string>
+    <string name="hint_empty">(empty)</string>
     <string name="error">Error:</string>
 </resources>
