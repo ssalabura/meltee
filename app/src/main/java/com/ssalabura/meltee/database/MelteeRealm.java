@@ -1,6 +1,7 @@
 package com.ssalabura.meltee.database;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -92,9 +93,13 @@ public class MelteeRealm {
         Realm instance = getInstance(username);
         Friend newFriend = new Friend(friendName, username);
         newFriend.lastPhotoTimestamp = 0;
-        instance.executeTransaction(transaction -> {
-            transaction.insert(newFriend);
-        });
+        try {
+            instance.executeTransaction(transaction -> {
+                transaction.insert(newFriend);
+            });
+        } catch(Exception e) {
+            Log.e("Meltee", e.getMessage());
+        }
         instance.close();
     }
 

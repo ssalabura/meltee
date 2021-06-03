@@ -29,11 +29,11 @@ class RealmNotificationManager {
         if(photoCards.size() > 0) {
             Log.d("Meltee", "lastSeen:  " + lastSeen);
             Log.d("Meltee", "lastPhoto: " + photoCards.get(0).timestamp);
+            preferences.edit().putLong("lastSeen", photoCards.get(0).timestamp).apply();
         }
         for(PhotoCard photoCard : photoCards) {
             if(photoCard.timestamp > lastSeen) showNotification(context, photoCard);
         }
-        preferences.edit().putLong("lastSeen", photoCards.get(0).timestamp).apply();
     }
 
     private static void showNotification(Context context, PhotoCard photoCard) {
