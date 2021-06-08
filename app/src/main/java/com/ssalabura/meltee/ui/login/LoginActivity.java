@@ -152,7 +152,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void goToMainActivity(AuthUserDetails model) {
-        MelteeRealm.setConfig(getApplicationContext(), model.getUser(), model.getDisplayName());
+        MelteeRealm.setConfig(model.getUser(), model.getDisplayName());
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
         intent.putExtra("username", model.getDisplayName());
         startActivity(intent);

@@ -10,6 +10,8 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.CancellationSignal;
+import android.util.Log;
 import android.util.Size;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -52,6 +54,7 @@ public class AddPhotoFragment extends Fragment
     private CameraSelector cameraSelector;
     private ImageCapture imageCapture;
     private PhotoCard photoCard;
+    private ArrayList<String> locationList = new ArrayList<>();
 
     private final Size resolution = new Size(600,800); // for faster queries, should be higher
 
@@ -61,29 +64,10 @@ public class AddPhotoFragment extends Fragment
         holder = new AddPhotoViewHolder(root);
         holder.changeState(AddPhotoViewHolder.State.PHOTO_NOT_TAKEN);
 
-        if(ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(getActivity(),new String[]{Manifest.permission.CAMERA},0);
-        }
+        ActivityCompat.requestPermissions(getActivity(),new String[]{Manifest.permission.CAMERA, Manifest.permission.ACCESS_FINE_LOCATION},0);
         cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA;
         startCamera();
-
-        // get location
-        ArrayList<String> locationList = new ArrayList<>();
-        locationList.add(getString(R.string.hint_empty));
-        LocationManager locationManager = (LocationManager) getContext().getSystemService(LOCATION_SERVICE);
-        ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION},0);
-        if(ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-            Geocoder geocoder = new Geocoder(getContext());
-            try {
-                List<Address> addressList = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 5);
-                for(Address address : addressList) {
-                    locationList.add(address.getAddressLine(0));
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        updateLocationList();
 
         holder.button_flip_camera.setOnClickListener(v -> {
             if(cameraSelector == CameraSelector.DEFAULT_BACK_CAMERA) {
@@ -97,6 +81,7 @@ public class AddPhotoFragment extends Fragment
         holder.button_take_photo.setOnClickListener(v -> takePhoto());
         holder.button_back.setOnClickListener(v -> onClickButtonBack());
         holder.button_additional_info.setOnClickListener(v -> {
+            updateLocationList();
             DialogFragment dialogFragment = new AdditionalInfoDialogFragment();
             dialogFragment.setTargetFragment(this, 22);
             Bundle bundle = new Bundle();
@@ -142,6 +127,31 @@ public class AddPhotoFragment extends Fragment
             cameraProvider.unbindAll();
             cameraProvider.bindToLifecycle(getActivity(), cameraSelector, preview, imageCapture);
         }, ContextCompat.getMainExecutor(getContext()));
+    }
+
+    private void updateLocationList() {
+        if(ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            LocationManager locationManager = (LocationManager) getContext().getSystemService(LOCATION_SERVICE);
+            Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if(location == null) {
+                location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            }
+            if(location == null) {
+                Log.e("Meltee", "location unavailable.");
+                return;
+            }
+            Geocoder geocoder = new Geocoder(getContext());
+            try {
+                List<Address> addressList = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 5);
+                locationList.clear();
+                locationList.add(getString(R.string.hint_empty));
+                for(Address address : addressList) {
+                    locationList.add(address.getAddressLine(0));
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void takePhoto() {

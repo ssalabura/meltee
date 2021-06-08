@@ -26,6 +26,8 @@
     <string name="title_friends">Friends</string>
     <string name="never">never</string>
 
+    <string name="new_photo">"New photo from "</string>
+
     <string name="hint_empty">(empty)</string>
     <string name="error">Error:</string>
 </resources>

@@ -35,6 +35,8 @@ public class DashboardFragment extends Fragment {
             new Thread(this::refreshPhotoCards).start();
         });
 
+        MelteeRealm.startListener(getContext());
+
         recyclerView.setAdapter(new PhotoCardViewAdapter(getContext(), new ArrayList<>()));
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);

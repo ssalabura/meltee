@@ -26,6 +26,8 @@
     <string name="title_friends">Znajomi</string>
     <string name="never">nigdy</string>
 
+    <string name="new_photo">"Nowe zdjęcie od "</string>
+
     <string name="hint_empty">(brak)</string>
     <string name="error">Błąd:</string>
 </resources>

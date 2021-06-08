@@ -53,29 +53,6 @@ public class MainActivity extends AppCompatActivity {
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }
-
-        // I was playing with WorkManager for a bit
-        // might be useful in the future
-
-//        WorkManager.getInstance(this).cancelAllWorkByTag("MelteeSync");
-//
-//        WorkRequest workRequest =
-//                new PeriodicWorkRequest.Builder(SyncWorker.class,
-//                        15, TimeUnit.MINUTES)
-//                        .addTag("MelteeSync")
-//                        .build();
-//
-//        WorkManager.getInstance(this).enqueue(workRequest);
-
-        //test by id
-//        String id = "c0afe124-3e61-44c1-bad6-b4615bac22db";
-//
-//        WorkManager.getInstance(this).getWorkInfoByIdLiveData(UUID.fromString(id)).observe(this, new Observer<WorkInfo>() {
-//            @Override
-//            public void onChanged(WorkInfo workInfo) {
-//                Log.d("Meltee", "id-test: " + workInfo.getState());
-//            }
-//        });
     }
 
     @Override

@@ -25,10 +25,12 @@ public class MelteeRealm {
         return app;
     }
 
-    public static void setConfig(Context context, User newUser, String newUsername) {
+    public static void setConfig(User newUser, String newUsername) {
         user = newUser;
         username = newUsername;
+    }
 
+    public static void startListener(Context context) {
         getInstance(username).addChangeListener(
                 realm -> RealmNotificationManager.reactToChanges(context)
         );
@@ -84,7 +86,9 @@ public class MelteeRealm {
     public static List<PhotoCard> getPhotos() {
         Realm instance = getInstance(username);
         List<PhotoCard> photoCardList = instance.copyFromRealm(
-                instance.where(PhotoCard.class).findAll().sort("timestamp", Sort.DESCENDING));
+                instance.where(PhotoCard.class)
+                        .greaterThan("timestamp", System.currentTimeMillis()-24*60*60*1000)
+                        .findAll().sort("timestamp", Sort.DESCENDING));
         instance.close();
         return photoCardList;
     }
