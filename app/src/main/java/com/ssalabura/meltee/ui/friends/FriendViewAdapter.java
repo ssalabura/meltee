@@ -44,6 +44,9 @@ public class FriendViewAdapter extends RecyclerView.Adapter<FriendViewHolder> {
         } else {
             holder.lastPhotoTimestamp.setText(R.string.never);
         }
+        if(friend.profilePicture != null) {
+            holder.profilePicture.setImageBitmap(friend.profilePicture);
+        }
     }
 
     @Override

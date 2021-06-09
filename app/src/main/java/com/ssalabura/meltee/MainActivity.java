@@ -2,9 +2,9 @@ package com.ssalabura.meltee;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.database.CursorWindow;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,6 +15,7 @@ import com.ssalabura.meltee.ui.login.LoginActivity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -22,12 +23,15 @@ import androidx.navigation.ui.NavigationUI;
 
 import java.lang.reflect.Field;
 
+import io.realm.Realm;
+
 public class MainActivity extends AppCompatActivity {
     public static String username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Realm.init(this);
         setContentView(R.layout.activity_main);
         username = getIntent().getExtras().getString("username");
         BottomNavigationView navView = findViewById(R.id.nav_view);
@@ -47,14 +51,13 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
 
-        MelteeRealm.startListener(this);
+        Context context = this;
+        ContextCompat.getMainExecutor(context).execute(() -> MelteeRealm.startListener(context));
 
         //notification channel
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel("new_photos", "New Photos", NotificationManager.IMPORTANCE_DEFAULT);
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-        }
+        NotificationChannel channel = new NotificationChannel("new_photos", "New Photos", NotificationManager.IMPORTANCE_DEFAULT);
+        NotificationManager notificationManager = getSystemService(NotificationManager.class);
+        notificationManager.createNotificationChannel(channel);
     }
 
     @Override

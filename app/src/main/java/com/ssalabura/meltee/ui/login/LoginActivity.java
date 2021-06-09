@@ -37,7 +37,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Realm.init(getApplicationContext());
+        Realm.init(this);
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         User user = MelteeRealm.getApp().currentUser();

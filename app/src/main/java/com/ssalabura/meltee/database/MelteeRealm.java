@@ -1,7 +1,10 @@
 package com.ssalabura.meltee.database;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.util.Log;
+
+import com.ssalabura.meltee.util.BitmapTools;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -104,7 +107,7 @@ public class MelteeRealm {
                 transaction.insert(newFriend);
             });
         } catch(Exception e) {
-            Log.e("Meltee", "Failed inserting friend.", e);
+            Log.e("Meltee", "Failed inserting friend: " + e.getMessage());
         }
         instance.close();
     }
@@ -114,6 +117,19 @@ public class MelteeRealm {
         List<Friend> friendList = instance.copyFromRealm(
                 instance.where(Friend.class).findAll().sort("lastPhotoTimestamp", Sort.DESCENDING));
         instance.close();
+
+        String[] usernames = friendList.stream().map(friend -> friend.username).toArray(String[]::new);
+
+        instance = getInstance("public");
+        List<Profile> friendProfiles = instance.copyFromRealm(
+                instance.where(Profile.class).in("_id", usernames).findAll());
+        for(Friend friend : friendList) {
+            for(Profile profile : friendProfiles) {
+                if(friend.username.equals(profile._id)) {
+                    friend.profilePicture = BitmapTools.fromByteArray(profile.photo);
+                }
+            }
+        }
         return friendList;
     }
 
@@ -126,6 +142,28 @@ public class MelteeRealm {
                 });
             }
         }
+        instance.close();
+    }
+
+    public static Bitmap getProfilePicture() {
+        Realm instance = getInstance("public");
+        Profile realmProfile = instance.where(Profile.class).equalTo("_id", username).findFirst();
+        if(realmProfile == null) {
+            instance.close();
+            return null;
+        }
+        Bitmap bitmap = BitmapTools.fromByteArray(instance.copyFromRealm(realmProfile).photo);
+        instance.close();
+        return bitmap;
+    }
+
+    public static void updateProfile(Bitmap profilePicture) {
+        Realm instance = getInstance("public");
+        Profile profile = new Profile(username);
+        profile.photo = BitmapTools.toByteArray(profilePicture);
+        instance.executeTransaction(transaction -> {
+            transaction.insertOrUpdate(profile);
+        });
         instance.close();
     }
 }
