@@ -47,6 +47,8 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
 
+        MelteeRealm.startListener(this);
+
         //notification channel
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel("new_photos", "New Photos", NotificationManager.IMPORTANCE_DEFAULT);

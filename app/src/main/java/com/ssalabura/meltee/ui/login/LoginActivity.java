@@ -37,7 +37,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Realm.init(this);
+        Realm.init(getApplicationContext());
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         User user = MelteeRealm.getApp().currentUser();
@@ -81,8 +81,8 @@ public class LoginActivity extends AppCompatActivity {
                 showErrorToast(loginResult.getError());
             }
             if (loginResult.getSuccess() != null) {
-                saveCredentials(preferences, usernameEditText.getText().toString());
-                showLoginToast(usernameEditText.getText().toString());
+                saveCredentials(preferences, loginResult.getSuccess().getDisplayName());
+                showLoginToast(loginResult.getSuccess().getDisplayName());
                 goToMainActivity(loginResult.getSuccess());
             }
             setResult(Activity.RESULT_OK);

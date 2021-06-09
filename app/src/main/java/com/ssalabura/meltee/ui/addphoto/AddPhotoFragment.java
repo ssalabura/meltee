@@ -158,7 +158,7 @@ public class AddPhotoFragment extends Fragment
         imageCapture.takePicture(ContextCompat.getMainExecutor(getContext()), new ImageCapture.OnImageCapturedCallback() {
             @Override
             public void onCaptureSuccess(@NonNull ImageProxy image) {
-                System.out.println("Photo capture succeeded.");
+                Log.i("Meltee", "Photo capture succeeded.");
                 photoCard.timestamp = System.currentTimeMillis();
                 holder.card_preview_holder.timestamp.setText(
                         new SimpleDateFormat("KK:mm aa", Locale.ENGLISH).format(photoCard.timestamp));
@@ -173,7 +173,7 @@ public class AddPhotoFragment extends Fragment
             @Override
             public void onError(@NonNull ImageCaptureException exception) {
                 Toast.makeText(getContext(), getString(R.string.error) + " " + exception.getMessage(), Toast.LENGTH_SHORT).show();
-                System.out.println("Photo capture failed: " + exception.getMessage());
+                Log.e("Meltee", "Photo capture failed.", exception);
             }
         });
     }
@@ -193,7 +193,7 @@ public class AddPhotoFragment extends Fragment
 
         activity.runOnUiThread(() -> {
             Toast.makeText(activity, activity.getString(R.string.photo_success), Toast.LENGTH_SHORT).show();
-            System.out.println("Photo successfully sent.");
+            Log.i("Meltee", "Photo successfully sent.");
         });
     }
 

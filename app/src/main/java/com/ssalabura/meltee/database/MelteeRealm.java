@@ -34,27 +34,29 @@ public class MelteeRealm {
         getInstance(username).addChangeListener(
                 realm -> RealmNotificationManager.reactToChanges(context)
         );
+        Log.i("Meltee", "Started realm listener.");
     }
     
     public static void logOut() {
         user.logOutAsync(result -> {
             if(result.isSuccess()) {
-                System.out.println("Successfully logged out.");
+                Log.i("Meltee", "Successfully logged out.");
             } else {
-                System.out.println("Logout failed: " + result.getError().getErrorMessage());
+                Log.e("Meltee", "Logout failed.", result.getError());
             }
         });
     }
 
     private static SyncConfiguration getConfig(String partitionValue) {
         SyncConfiguration.Builder builder = new SyncConfiguration.Builder(
-                user,partitionValue)
+                user, partitionValue)
                 .allowQueriesOnUiThread(true)
                 .allowWritesOnUiThread(true);
         return builder.build();
     }
 
     public static Realm getInstance(String partitionValue) {
+        Log.d("Meltee", "Getting instance of realm: " + partitionValue);
         return Realm.getInstance(getConfig(partitionValue));
     }
 
@@ -102,7 +104,7 @@ public class MelteeRealm {
                 transaction.insert(newFriend);
             });
         } catch(Exception e) {
-            Log.e("Meltee", e.getMessage());
+            Log.e("Meltee", "Failed inserting friend.", e);
         }
         instance.close();
     }

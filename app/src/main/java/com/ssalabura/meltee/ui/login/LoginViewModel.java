@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import android.app.Activity;
+import android.util.Log;
 
 import com.ssalabura.meltee.R;
 import com.ssalabura.meltee.database.MelteeRealm;
@@ -38,7 +39,7 @@ public class LoginViewModel extends ViewModel {
                 loginResult.setValue(new AuthResult(new AuthUserDetails(result.get(), username)));
             } else {
                 loginResult.setValue(new AuthResult(R.string.login_failed));
-                System.out.println("Login failed: " + result.getError().getErrorMessage());
+                Log.e("Meltee", "Login failed.", result.getError());
             }
         });
     }

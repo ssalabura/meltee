@@ -29,8 +29,7 @@ class RealmNotificationManager {
         Log.d("Meltee", "RealmNotificationManager loaded " + photoCards.size() + " photos.");
 
         if(photoCards.size() > 0) {
-            Log.d("Meltee", "lastSeen:  " + lastSeen);
-            Log.d("Meltee", "lastPhoto: " + photoCards.get(0).timestamp);
+            Log.d("Meltee", "lastSeen: " + lastSeen + ", lastPhoto: " + photoCards.get(0).timestamp);
             preferences.edit().putLong("lastSeen", photoCards.get(0).timestamp).apply();
         }
         Collections.reverse(photoCards);

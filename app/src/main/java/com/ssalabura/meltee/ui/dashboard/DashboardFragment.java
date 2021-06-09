@@ -1,6 +1,7 @@
 package com.ssalabura.meltee.ui.dashboard;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,8 +36,6 @@ public class DashboardFragment extends Fragment {
             new Thread(this::refreshPhotoCards).start();
         });
 
-        MelteeRealm.startListener(getContext());
-
         recyclerView.setAdapter(new PhotoCardViewAdapter(getContext(), new ArrayList<>()));
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
@@ -57,5 +56,6 @@ public class DashboardFragment extends Fragment {
             recyclerView.setAdapter(new PhotoCardViewAdapter(getContext(), photoCardList));
             swipeRefreshLayout.setRefreshing(false);
         });
+        Log.i("Meltee", "Refreshed photo cards.");
     }
 }
