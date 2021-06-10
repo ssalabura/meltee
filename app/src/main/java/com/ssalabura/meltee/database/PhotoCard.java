@@ -21,6 +21,8 @@ public class PhotoCard extends RealmObject {
     public String location;
 
     @Ignore
+    public Bitmap profilePicture;
+    @Ignore
     public List<String> receivers;
     @Ignore
     public Bitmap bitmap;

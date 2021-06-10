@@ -9,8 +9,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.ssalabura.meltee.R;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class ClickableFriendViewHolder extends RecyclerView.ViewHolder {
     public CardView cardView;
+    public CircleImageView profilePicture;
     public TextView username;
     public boolean selected;
 
@@ -18,6 +21,7 @@ public class ClickableFriendViewHolder extends RecyclerView.ViewHolder {
         super(itemView);
 
         cardView = (CardView)itemView;
+        profilePicture = itemView.findViewById(R.id.profilePicture);
         username = itemView.findViewById(R.id.textView_username);
     }
 

@@ -47,15 +47,15 @@ public class DashboardFragment extends Fragment {
     private void refreshPhotoCards() {
         List<PhotoCard> photoCardList = MelteeRealm.getPhotos();
         TextView empty = root.findViewById(R.id.textView_empty);
-        if(photoCardList.size() > 0) {
-            empty.setVisibility(View.INVISIBLE);
-        } else {
-            empty.setVisibility(View.VISIBLE);
-        }
         getActivity().runOnUiThread(() -> {
+            if(photoCardList.size() > 0) {
+                empty.setVisibility(View.INVISIBLE);
+            } else {
+                empty.setVisibility(View.VISIBLE);
+            }
             recyclerView.setAdapter(new PhotoCardViewAdapter(getContext(), photoCardList));
             swipeRefreshLayout.setRefreshing(false);
         });
-        Log.i("Meltee", "Refreshed photo cards.");
+        Log.d("Meltee", "Refreshed photo cards.");
     }
 }

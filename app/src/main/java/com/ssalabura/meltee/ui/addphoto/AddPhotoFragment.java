@@ -10,7 +10,6 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.CancellationSignal;
 import android.util.Log;
 import android.util.Size;
 import android.view.LayoutInflater;
@@ -100,6 +99,7 @@ public class AddPhotoFragment extends Fragment
         photoCard = new PhotoCard();
         photoCard.sender = MainActivity.username;
         holder.card_preview_holder.sender.setText(MainActivity.username);
+        holder.card_preview_holder.profilePicture.setImageBitmap(MelteeRealm.getProfilePicture());
         holder.card_preview_holder.message.setVisibility(View.GONE);
         holder.card_preview_holder.location.setVisibility(View.GONE);
         return root;

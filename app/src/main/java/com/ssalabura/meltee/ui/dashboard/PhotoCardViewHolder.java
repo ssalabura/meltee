@@ -9,7 +9,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.ssalabura.meltee.R;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class PhotoCardViewHolder extends RecyclerView.ViewHolder {
+    public CircleImageView profilePicture;
     public TextView sender;
     public TextView timestamp;
     public ImageView photo;
@@ -19,6 +22,7 @@ public class PhotoCardViewHolder extends RecyclerView.ViewHolder {
     public PhotoCardViewHolder(@NonNull View itemView) {
         super(itemView);
 
+        this.profilePicture = itemView.findViewById(R.id.profilePicture);
         this.sender = itemView.findViewById(R.id.textView_sender);
         this.timestamp = itemView.findViewById(R.id.textView_timestamp);
         this.photo = itemView.findViewById(R.id.imageView);

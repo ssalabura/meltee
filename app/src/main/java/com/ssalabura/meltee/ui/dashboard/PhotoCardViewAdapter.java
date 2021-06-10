@@ -38,6 +38,9 @@ public class PhotoCardViewAdapter extends RecyclerView.Adapter<PhotoCardViewHold
     public void onBindViewHolder(@NonNull PhotoCardViewHolder holder, int position) {
         PhotoCard photoCard = this.photoCardList.get(position);
 
+        if(photoCard.profilePicture != null) {
+            holder.profilePicture.setImageBitmap(photoCard.profilePicture);
+        }
         holder.sender.setText(photoCard.sender);
         holder.timestamp.setText(new SimpleDateFormat("KK:mm aa", Locale.ENGLISH).format(photoCard.timestamp));
         int width = Resources.getSystem().getDisplayMetrics().widthPixels;

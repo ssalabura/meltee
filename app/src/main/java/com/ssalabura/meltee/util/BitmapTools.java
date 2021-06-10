@@ -49,6 +49,6 @@ public class BitmapTools {
         } else{
             output = Bitmap.createBitmap(bitmap, 0, bitmap.getHeight()/2 - bitmap.getWidth()/2, bitmap.getWidth(), bitmap.getWidth());
         }
-        return Bitmap.createScaledBitmap(output, 200, 200, true);
+        return Bitmap.createScaledBitmap(output, 400, 400, true);
     }
 }

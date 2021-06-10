@@ -43,6 +43,9 @@ public class ClickableFriendViewAdapter extends RecyclerView.Adapter<ClickableFr
                 selectedFriends.remove(friend.username);
             }
         });
+        if(friend.profilePicture != null) {
+            holder.profilePicture.setImageBitmap(friend.profilePicture);
+        }
         holder.username.setText(friend.username);
     }
 

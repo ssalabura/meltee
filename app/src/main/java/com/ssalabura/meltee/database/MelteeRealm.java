@@ -34,6 +34,7 @@ public class MelteeRealm {
     }
 
     public static void startListener(Context context) {
+        Log.i("Meltee", "Starting realm listener...");
         getInstance(username).addChangeListener(
                 realm -> RealmNotificationManager.reactToChanges(context)
         );
@@ -95,6 +96,16 @@ public class MelteeRealm {
                         .greaterThan("timestamp", System.currentTimeMillis()-24*60*60*1000)
                         .findAll().sort("timestamp", Sort.DESCENDING));
         instance.close();
+
+        String[] usernames = photoCardList.stream().map(photoCard -> photoCard.sender).toArray(String[]::new);
+        List<Profile> profiles = getProfiles(usernames);
+        for(PhotoCard photoCard : photoCardList) {
+            for(Profile profile : profiles) {
+                if(photoCard.sender.equals(profile._id)) {
+                    photoCard.profilePicture = BitmapTools.fromByteArray(profile.photo);
+                }
+            }
+        }
         return photoCardList;
     }
 
@@ -120,11 +131,9 @@ public class MelteeRealm {
 
         String[] usernames = friendList.stream().map(friend -> friend.username).toArray(String[]::new);
 
-        instance = getInstance("public");
-        List<Profile> friendProfiles = instance.copyFromRealm(
-                instance.where(Profile.class).in("_id", usernames).findAll());
+        List<Profile> profiles = getProfiles(usernames);
         for(Friend friend : friendList) {
-            for(Profile profile : friendProfiles) {
+            for(Profile profile : profiles) {
                 if(friend.username.equals(profile._id)) {
                     friend.profilePicture = BitmapTools.fromByteArray(profile.photo);
                 }
@@ -143,6 +152,14 @@ public class MelteeRealm {
             }
         }
         instance.close();
+    }
+
+    public static List<Profile> getProfiles(String[] usernames) {
+        Realm instance = getInstance("public");
+        List<Profile> profileList = instance.copyFromRealm(
+                instance.where(Profile.class).in("_id", usernames).findAll());
+        instance.close();
+        return profileList;
     }
 
     public static Bitmap getProfilePicture() {
